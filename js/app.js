@@ -40,7 +40,7 @@ function loadNextGoalOptions() {
         });
     }
 
-    const userId = $('#progressionUser').val();
+    const userId = currentSession.role === 'member' ? currentSession.userId : $('#progressionUser').val();
     if (userId) {
         const userProgressions = progressions.filter(p => 
             p.userId === userId && p.exercise === exerciseName

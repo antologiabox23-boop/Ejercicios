@@ -63,7 +63,7 @@ const exercises = [
         name: "Toes-to-bar", 
         category: "gimnastic",
         progressions: ["Knee raises", "Toes-to-rig", "Toes-to-bar asistido", "Toes-to-bar completo", "Toes-to-bar enlazado"],
-        video: "toestobar"
+        video: "toestobar.mp4"
     },
     { 
         name: "Rope Climb", 

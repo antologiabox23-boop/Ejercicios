@@ -158,7 +158,7 @@ function renderTrackWeek(s, recs) {
         <div class="track-scroll"><table class="table table-sm text-center mb-0"><thead><tr><th class="text-start">Ejercicio</th>`
         + days.map((d, i) => `<th>${d}<br><small>${dates[i].slice(8)}</small></th>`).join('') + '</tr></thead><tbody>';
     trackExercises().filter(x => x.category === trackGroup).forEach(x => {
-        h += `<tr><td class="text-start">${x.name}<br>${trackInfo(x, uid)}</td>` + dates.map(dt =>
+        h += `<tr><td class="text-start">${x.name}${x.video ? ` <a href="#" class="text-info" onclick="showExerciseGifModal('${x.name}');return false;" title="Ver demostración"><i class="fas fa-play-circle"></i></a>` : ''}<br>${trackInfo(x, uid)}</td>` + dates.map(dt =>
             `<td><input type="checkbox" class="form-check-input track-chk" data-ex="${x.name}" data-date="${dt}" ${done.has(x.name + '|' + dt) ? 'checked' : ''}></td>`
         ).join('') + '</tr>';
     });
