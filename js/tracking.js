@@ -156,24 +156,32 @@ function renderTrackStats(recs) {
     const c = {};
     recs.forEach(r => c[r.exercise] = (c[r.exercise] || 0) + 1);
     const top = Object.entries(c).sort((a, b) => b[1] - a[1])[0];
+    const rp = recs.map(r => parseFloat(r.rpe)).filter(n => n > 0);
+    const avg = rp.length ? (rp.reduce((a, b) => a + b, 0) / rp.length).toFixed(1) : '-';
     $('#trackStats').html(`
         <div class="d-flex justify-content-between mb-2"><span>Registros</span><strong>${recs.length}</strong></div>
         <div class="d-flex justify-content-between mb-2"><span>Días activos</span><strong>${days}</strong></div>
+        <div class="d-flex justify-content-between mb-2"><span>Percepción de carga (prom.)</span><strong>${avg}/10</strong></div>
         <div class="d-flex justify-content-between"><span>Más realizado</span><strong>${top ? top[0] + ' (' + top[1] + ')' : '-'}</strong></div>`);
 }
 
 function renderTrackRecs(recs) {
+    if (currentSession.role !== 'admin') { $('#trackRecs').empty(); return; }
     const g = {};
     recs.forEach(r => (EX_GROUPS[r.exercise] || []).forEach(k => g[k] = (g[k] || 0) + 1));
     const keys = Object.keys(g).sort((a, b) => g[b] - g[a]);
     if (!keys.length) { $('#trackRecs').html('<p class="text-muted">Registre ejercicios para ver recomendaciones.</p>'); return; }
-    const sec = (t, ic, arr) => `<h6 class="mt-2 text-primary"><i class="fas ${ic}"></i> ${t}</h6>
-        <ul class="small ps-3 mb-0">${arr.map(x => `<li>${x}</li>`).join('')}</ul>`;
+    const esc = s => $('<div>').text(s).html();
+    const items = (k, t) => REC[k][t].map(x => `<li>${x}</li>`).concat(
+        customExercises.filter(c => c.group === k && c.type === t).map(c =>
+            `<li>${esc(c.name)} <a href="#" class="text-danger ms-1" onclick="deleteCustomEx('${c.id}');return false;"><i class="fas fa-times"></i></a></li>`)
+    ).join('');
+    const sec = (t, ic, html) => `<h6 class="mt-2 text-primary"><i class="fas ${ic}"></i> ${t}</h6><ul class="small ps-3 mb-0">${html}</ul>`;
     $('#trackRecs').html(keys.map(k => {
         const r = REC[k];
         return `<div class="col-md-6 col-xl-4 mb-3"><div class="card h-100">
             <div class="card-header"><i class="fas ${r.icon}"></i> ${r.label} <span class="badge bg-dark float-end">${g[k]}x</span></div>
-            <div class="card-body">${sec('Movilidad', 'fa-rotate', r.mov)}${sec('Fortalecimiento', 'fa-dumbbell', r.fort)}${sec('Estiramiento', 'fa-spa', r.est)}</div>
+            <div class="card-body">${sec('Movilidad', 'fa-rotate', items(k, 'mov'))}${sec('Fortalecimiento', 'fa-dumbbell', items(k, 'fort'))}${sec('Estiramiento', 'fa-spa', items(k, 'est'))}</div>
         </div></div>`;
     }).join(''));
 }
@@ -187,18 +195,68 @@ function initTracking() {
     $('#trackToday').click(() => { trackCursor = new Date(); renderTracking(); });
     $('#tracking-tab').on('shown.bs.tab', renderTracking);
 
-    $(document).off('change.track').on('change.track', '.track-chk', async function () {
-        const el = $(this), uid = trackUserId();
-        const ex = el.attr('data-ex'), date = el.attr('data-date');
-        const category = (trackExercises().find(x => x.name === ex) || {}).category || '';
-        const res = await apiCall('toggleWeekly', { entry: { userId: uid, date, exercise: ex, category } });
-        if (!res || !res.success) {
-            alert((res && res.message) || 'No se pudo guardar.');
-            el.prop('checked', !el.prop('checked'));
-            return;
+    $('#newCustomExBtn').click(openCustomEx);
+    $('#cexSave').click(saveCustomEx);
+
+    $(document).off('change.track').on('change.track', '.track-chk', function () {
+        const el = this, $el = $(this);
+        const ex = $el.attr('data-ex'), date = $el.attr('data-date');
+        if (el.checked) {
+            askRPE(ex, rpe => { if (rpe === null) el.checked = false; else toggleTrack($el, ex, date, rpe); });
+        } else {
+            toggleTrack($el, ex, date, '');
         }
-        if (res.done) weeklyRecords.push({ id: res.id, userId: uid, date, exercise: ex, category });
-        else weeklyRecords = weeklyRecords.filter(r => !(r.userId === uid && r.date === date && r.exercise === ex));
-        renderTracking();
     });
+}
+
+function askRPE(ex, cb) {
+    $('#rpeExName').text(ex);
+    const m = bootstrap.Modal.getOrCreateInstance(document.getElementById('rpeModal'));
+    let done = false;
+    const finish = v => { if (done) return; done = true; m.hide(); cb(v); };
+    $('#rpeButtons').empty();
+    for (let i = 1; i <= 10; i++) {
+        $('#rpeButtons').append(`<button type="button" class="btn btn-outline-light rpe-btn" data-v="${i}" style="width:48px">${i}</button>`);
+    }
+    $('#rpeButtons .rpe-btn').on('click', function () { finish(+$(this).data('v')); });
+    $('#rpeCancel').off('click').on('click', () => finish(null));
+    m.show();
+}
+
+async function toggleTrack($el, ex, date, rpe) {
+    const uid = trackUserId();
+    const category = (trackExercises().find(x => x.name === ex) || {}).category || '';
+    const res = await apiCall('toggleWeekly', { entry: { userId: uid, date, exercise: ex, category, rpe } });
+    if (!res || !res.success) {
+        alert((res && res.message) || 'No se pudo guardar.');
+        $el.prop('checked', !$el.prop('checked'));
+        return;
+    }
+    if (res.done) weeklyRecords.push({ id: res.id, userId: uid, date, exercise: ex, category, rpe });
+    else weeklyRecords = weeklyRecords.filter(r => !(r.userId === uid && r.date === date && r.exercise === ex));
+    renderTracking();
+}
+
+function openCustomEx() {
+    $('#cexGroup').html(Object.keys(REC).map(k => `<option value="${k}">${REC[k].label}</option>`).join(''));
+    $('#cexName').val('');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('customExModal')).show();
+}
+
+async function saveCustomEx() {
+    const group = $('#cexGroup').val(), type = $('#cexType').val(), name = $('#cexName').val().trim();
+    if (!name) { alert('Escriba el nombre del ejercicio.'); return; }
+    const res = await apiCall('saveCustomExercise', { item: { group, type, name } });
+    if (!res || !res.success) { alert((res && res.message) || 'No se pudo guardar.'); return; }
+    customExercises.push({ id: res.id, group, type, name });
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('customExModal')).hide();
+    renderTracking();
+}
+
+async function deleteCustomEx(id) {
+    if (!confirm('¿Eliminar este ejercicio?')) return;
+    const res = await apiCall('deleteCustomExercise', { id });
+    if (!res || !res.success) { alert((res && res.message) || 'No se pudo eliminar.'); return; }
+    customExercises = customExercises.filter(c => c.id !== id);
+    renderTracking();
 }

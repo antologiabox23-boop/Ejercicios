@@ -43,11 +43,11 @@ async function loadAllData() {
         apiCall('getRM'),
         apiCall('getProgressions'),
         apiCall('getWeekly'),
-        apiCall('getCustomExercises')
+                apiCall('getCustomExercises')
     ]);
+
     customExercises = (customRes && customRes.success) ? customRes.items : [];
-    
-    users = (usersRes && usersRes.success) ? usersRes.users.map(normalizeUser) : [];
+            users = (usersRes && usersRes.success) ? usersRes.users.map(normalizeUser) : [];
     rmRecords = (rmRes && rmRes.success) ? rmRes.records.map(normalizeRM) : [];
     progressions = (progRes && progRes.success) ? progRes.progressions.map(normalizeProgression) : [];
     weeklyRecords = (weeklyRes && weeklyRes.success)
