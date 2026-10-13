@@ -122,7 +122,29 @@ function renderTracking() {
     renderTrackRecs(recs);
 }
 
+function trackInfo(x, uid) {
+    if (x.category === 'gimnastic') {
+        const mine = progressions.filter(p => p.userId === uid && p.exercise === x.name);
+        if (mine.length) {
+            const last = mine.reduce((a, b) => new Date(b.date) >= new Date(a.date) ? b : a);
+            return `<small class="lvl-chip lvl-gym">${last.level}</small>`;
+        }
+        const base = (x.progressions || [])[0];
+        return base ? `<small class="text-muted">Base: ${base}</small>` : '';
+    }
+    if (x.category === 'weightlifting') {
+        const mine = rmRecords.filter(r => r.userId === uid && r.exercise === x.name);
+        if (mine.length) {
+            const best = Math.max.apply(null, mine.map(r => r.rm));
+            return `<small class="lvl-chip lvl-rm">RM ${Math.round(best)} kg</small>`;
+        }
+        return '<small class="text-muted">Sin RM</small>';
+    }
+    return '';
+}
+
 function renderTrackWeek(s, recs) {
+    const uid = trackUserId();
     const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const dates = days.map((_, i) => { const d = new Date(s); d.setDate(s.getDate() + i); return ymd(d); });
     const done = new Set(recs.map(r => r.exercise + '|' + r.date));
@@ -136,7 +158,7 @@ function renderTrackWeek(s, recs) {
         <div class="track-scroll"><table class="table table-sm text-center mb-0"><thead><tr><th class="text-start">Ejercicio</th>`
         + days.map((d, i) => `<th>${d}<br><small>${dates[i].slice(8)}</small></th>`).join('') + '</tr></thead><tbody>';
     trackExercises().filter(x => x.category === trackGroup).forEach(x => {
-        h += `<tr><td class="text-start">${x.name}</td>` + dates.map(dt =>
+        h += `<tr><td class="text-start">${x.name}<br>${trackInfo(x, uid)}</td>` + dates.map(dt =>
             `<td><input type="checkbox" class="form-check-input track-chk" data-ex="${x.name}" data-date="${dt}" ${done.has(x.name + '|' + dt) ? 'checked' : ''}></td>`
         ).join('') + '</tr>';
     });
