@@ -933,3 +933,28 @@ h1 {
 .admin-only {
     /* se oculta vía JS para usuarios con rol "member" */
 }
+
+/* Seguimiento: tabla con encabezado fijo */
+.track-scroll {
+    max-height: 60vh;
+    overflow: auto;
+    border-radius: 8px;
+}
+.track-scroll .table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Chips de nivel / RM en usuarios */
+.lvl-chip {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    margin: 2px 4px 2px 0;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+.lvl-gym { background: rgba(39, 249, 212, 0.15); border: 1px solid var(--color-primary); }
+.lvl-rm  { background: rgba(255, 114, 159, 0.15); border: 1px solid var(--color-secondary); }
+
