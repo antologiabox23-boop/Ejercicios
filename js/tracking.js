@@ -1,6 +1,7 @@
 // ==================== SEGUIMIENTO SEMANAL / MENSUAL / TRIMESTRAL ====================
 let weeklyRecords = [];
 let trackCursor = new Date();
+let trackGroup = 'gimnastic';
 
 const TRACK_EXTRA = [
     { name: 'Air Squat', category: 'weightlifting' },
@@ -126,15 +127,18 @@ function renderTrackWeek(s, recs) {
     const dates = days.map((_, i) => { const d = new Date(s); d.setDate(s.getDate() + i); return ymd(d); });
     const done = new Set(recs.map(r => r.exercise + '|' + r.date));
     const cats = { gimnastic: 'Gimnásticos', weightlifting: 'Levantamiento', endurance: 'Resistencia' };
-    let h = '<div class="table-responsive"><table class="table table-sm text-center"><thead><tr><th class="text-start">Ejercicio</th>'
+    const catOf = n => (trackExercises().find(x => x.name === n) || {}).category;
+    const pills = Object.keys(cats).map(k => {
+        const n = recs.filter(r => catOf(r.exercise) === k).length;
+        return `<button type="button" class="btn btn-sm track-grp ${k === trackGroup ? 'btn-primary' : 'btn-outline-light'}" data-grp="${k}">${cats[k]} <span class="badge bg-dark">${n}</span></button>`;
+    }).join('');
+    let h = `<div class="d-flex gap-2 flex-wrap mb-3">${pills}</div>
+        <div class="track-scroll"><table class="table table-sm text-center mb-0"><thead><tr><th class="text-start">Ejercicio</th>`
         + days.map((d, i) => `<th>${d}<br><small>${dates[i].slice(8)}</small></th>`).join('') + '</tr></thead><tbody>';
-    Object.keys(cats).forEach(cat => {
-        h += `<tr><td colspan="8" class="text-start"><strong>${cats[cat]}</strong></td></tr>`;
-        trackExercises().filter(x => x.category === cat).forEach(x => {
-            h += `<tr><td class="text-start">${x.name}</td>` + dates.map(dt =>
-                `<td><input type="checkbox" class="form-check-input track-chk" data-ex="${x.name}" data-date="${dt}" ${done.has(x.name + '|' + dt) ? 'checked' : ''}></td>`
-            ).join('') + '</tr>';
-        });
+    trackExercises().filter(x => x.category === trackGroup).forEach(x => {
+        h += `<tr><td class="text-start">${x.name}</td>` + dates.map(dt =>
+            `<td><input type="checkbox" class="form-check-input track-chk" data-ex="${x.name}" data-date="${dt}" ${done.has(x.name + '|' + dt) ? 'checked' : ''}></td>`
+        ).join('') + '</tr>';
     });
     $('#trackBody').html(h + '</tbody></table></div>');
 }
@@ -195,6 +199,10 @@ function initTracking() {
     $('#trackToday').click(() => { trackCursor = new Date(); renderTracking(); });
     $('#tracking-tab').on('shown.bs.tab', renderTracking);
 
+    $(document).off('click.grp').on('click.grp', '.track-grp', function () {
+        trackGroup = $(this).attr('data-grp');
+        renderTracking();
+    });
     $('#newCustomExBtn').click(openCustomEx);
     $('#cexSave').click(saveCustomEx);
 

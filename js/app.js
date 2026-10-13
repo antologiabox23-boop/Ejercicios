@@ -208,6 +208,23 @@ async function saveProgression() {
     updateStats();
 }
 
+function userLevelsHTML(userId) {
+    const lastProg = {};
+    progressions.filter(p => p.userId === userId).forEach(p => {
+        const c = lastProg[p.exercise];
+        if (!c || new Date(p.date) >= new Date(c.date)) lastProg[p.exercise] = p;
+    });
+    const bestRM = {};
+    rmRecords.filter(r => r.userId === userId).forEach(r => {
+        if (!bestRM[r.exercise] || r.rm > bestRM[r.exercise].rm) bestRM[r.exercise] = r;
+    });
+    const g = Object.values(lastProg).map(p =>
+        `<span class="lvl-chip lvl-gym"><b>${p.exercise}:</b> ${p.level}</span>`).join('');
+    const w = Object.values(bestRM).map(r =>
+        `<span class="lvl-chip lvl-rm"><b>${r.exercise}:</b> ${Math.round(r.rm)} kg</span>`).join('');
+    return (g || w) ? g + w : '<small class="text-muted">Sin registros</small>';
+}
+
 function loadUsers() {
     const usersList = $('#usersList');
     usersList.empty();
@@ -228,6 +245,7 @@ function loadUsers() {
                 <td>${user.phone}</td>
                 <td><span class="badge-category ${categoryClass}">${user.category}</span></td>
                 <td>${user.weight} kg</td>
+                <td>${userLevelsHTML(user.id)}</td>
                 <td>
                     <button class="btn btn-sm btn-outline-primary me-1" onclick="viewUserProgress('${user.id}')" title="Ver progreso">
                         <i class="fas fa-chart-bar"></i>
