@@ -3,2034 +3,946 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planilla Control CrossFit Mejorada</title>
-    <style>
-        :root {
-            --primary: #e74c3c;
-            --secondary: #2c3e50;
-            --light: #ecf0f1;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #c0392b;
-            --gymnastic: #3498db;
-            --endurance: #9b59b6;
-            --weightlifting: #e67e22;
-            --user-management: #1abc9c;
-            --custom-exercise: #e84393;
-        }
-        
-        .crossfit-container {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 100%;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin: 0 auto;
-        }
-        
-        .crossfit-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--danger) 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .crossfit-header h1 {
-            font-size: 1.8em;
-            margin: 0 0 10px 0;
-        }
-        
-        .crossfit-subtitle {
-            font-size: 1em;
-            opacity: 0.9;
-        }
-        
-        .category-legend {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .category-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.85em;
-        }
-        
-        .category-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .gymnastic-color { background-color: var(--gymnastic); }
-        .endurance-color { background-color: var(--endurance); }
-        .weightlifting-color { background-color: var(--weightlifting); }
-        .user-color { background-color: var(--user-management); }
-        .custom-color { background-color: var(--custom-exercise); }
-        
-        .crossfit-controls {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            background: var(--secondary);
-            color: white;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .week-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .date-picker {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .date-picker input {
-            padding: 5px;
-            border-radius: 3px;
-            border: 1px solid #ddd;
-        }
-        
-        .crossfit-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-            font-size: 0.9em;
-        }
-        
-        .crossfit-btn:hover {
-            background: var(--danger);
-        }
-        
-        .user-btn {
-            background: var(--user-management);
-        }
-        
-        .user-btn:hover {
-            background: #16a085;
-        }
-        
-        .exercise-btn {
-            background: var(--custom-exercise);
-        }
-        
-        .exercise-btn:hover {
-            background: #d63031;
-        }
-        
-        .current-week {
-            font-weight: bold;
-            min-width: 200px;
-            text-align: center;
-        }
-        
-        .wod-section {
-            background: white;
-            padding: 15px;
-            margin: 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .wod-content {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-        
-        .wod-exercise {
-            margin-bottom: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .workout-table-container {
-            overflow-x: auto;
-            padding: 10px;
-        }
-        
-        .workout-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-size: 0.9em;
-        }
-        
-        .workout-table th {
-            background: var(--secondary);
-            color: white;
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .workout-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
-        }
-        
-        .workout-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .exercise-name {
-            text-align: left;
-            font-weight: bold;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .exercise-category {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        
-        .gymnastic { background-color: var(--gymnastic); }
-        .endurance { background-color: var(--endurance); }
-        .weightlifting { background-color: var(--weightlifting); }
-        .custom { background-color: var(--custom-exercise); }
-        
-        .day-header {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-        
-        .completed {
-            background: var(--success);
-            color: white;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-size: 0.9em;
-        }
-        
-        .completed:hover {
-            transform: scale(1.1);
-        }
-        
-        .not-completed {
-            background: #e0e0e0;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .not-completed:hover {
-            background: #d0d0d0;
-        }
-        
-        .crossfit-sidebar {
-            background: #f8f9fa;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-        }
-        
-        .stats-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .stats-card h3 {
-            color: var(--secondary);
-            margin: 0 0 12px 0;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 6px;
-            font-size: 1.1em;
-        }
-        
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9em;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .progress {
-            height: 100%;
-            background: var(--success);
-            border-radius: 4px;
-        }
-        
-        .exercise-list {
-            max-height: 200px;
-            overflow-y: auto;
-            font-size: 0.9em;
-        }
-        
-        .exercise-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .exercise-item:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .highlight {
-            background: #fff9e6 !important;
-            font-weight: bold;
-        }
-        
-        .empty-day {
-            color: #999;
-            font-style: italic;
-            text-align: center;
-            padding: 10px;
-        }
-        
-        .crossfit-footer {
-            text-align: center;
-            padding: 15px;
-            background: var(--secondary);
-            color: white;
-            font-size: 0.8em;
-        }
-        
-        .export-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .export-btn {
-            padding: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-            font-size: 0.9em;
-        }
-        
-        .export-btn:hover {
-            background: var(--danger);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .modal h3 {
-            color: var(--secondary);
-            margin-top: 0;
-        }
-        
-        .user-form, .exercise-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .form-group label {
-            font-weight: bold;
-            color: var(--secondary);
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .form-actions button {
-            flex: 1;
-        }
-        
-        .user-list, .exercise-list-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-            border: 1px solid #eee;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .user-item, .exercise-item-list {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            background: #f8f9fa;
-            margin-bottom: 5px;
-            border-radius: 4px;
-        }
-        
-        .user-info, .exercise-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        
-        .user-name, .exercise-name-list {
-            font-weight: bold;
-            color: var(--secondary);
-        }
-        
-        .user-stats, .exercise-stats {
-            font-size: 0.8em;
-            color: #666;
-        }
-        
-        .user-actions, .exercise-actions {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .user-actions button, .exercise-actions button {
-            padding: 5px 8px;
-            font-size: 0.8em;
-        }
-        
-        .inactive-alert {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin: 10px 15px;
-            display: none;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-        }
-        
-        .rm-display {
-            font-size: 0.85em;
-            color: var(--weightlifting);
-            font-weight: bold;
-            margin-top: 3px;
-        }
-        
-        .progression-display {
-            font-size: 0.85em;
-            color: var(--gymnastic);
-            margin-top: 3px;
-        }
-        
-        .progression-levels {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
-        }
-        
-        .progression-level {
-            background: #e3f2fd;
-            color: #1565c0;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.75em;
-        }
-        
-        .progression-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-        
-        .delete-progression {
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 2px 6px;
-            cursor: pointer;
-            font-size: 0.8em;
-        }
-        
-        .add-progression-btn {
-            background: var(--gymnastic);
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-top: 5px;
-            font-size: 0.8em;
-        }
-        
-        .week-empty {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        
-        .week-empty button {
-            margin-top: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        @media (min-width: 768px) {
-            .crossfit-container {
-                display: grid;
-                grid-template-areas: 
-                    "header header"
-                    "controls controls"
-                    "alert alert"
-                    "wod wod"
-                    "table sidebar"
-                    "footer footer";
-                grid-template-columns: 1fr 300px;
-            }
-            
-            .crossfit-header { grid-area: header; }
-            .crossfit-controls { grid-area: controls; }
-            .inactive-alert { grid-area: alert; }
-            .wod-section { grid-area: wod; }
-            .workout-table-container { grid-area: table; }
-            .crossfit-sidebar { grid-area: sidebar; border-top: none; border-left: 1px solid #ddd; }
-            .crossfit-footer { grid-area: footer; }
-        }
-        
-        @media (max-width: 767px) {
-            .crossfit-controls {
-                flex-direction: column;
-            }
-            
-            .week-selector {
-                justify-content: center;
-            }
-            
-            .category-legend {
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <title>Antología Box23 - Sistema de Seguimiento de Entrenamiento</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="crossfit-container">
-        <div class="crossfit-header">
-            <h1>Planilla de Control CrossFit Mejorada</h1>
-            <div class="crossfit-subtitle">Seguimiento semanal de ejercicios, progresos y usuarios</div>
-            <div class="category-legend">
-                <div class="category-item">
-                    <div class="category-color gymnastic-color"></div>
-                    <span>Gimnásticos</span>
-                </div>
-                <div class="category-item">
-                    <div class="category-color endurance-color"></div>
-                    <span>Resistencia</span>
-                </div>
-                <div class="category-item">
-                    <div class="category-color weightlifting-color"></div>
-                    <span>Levantamiento</span>
-                </div>
-                <div class="category-item">
-                    <div class="category-color user-color"></div>
-                    <span>Usuarios</span>
-                </div>
-                <div class="category-item">
-                    <div class="category-color custom-color"></div>
-                    <span>Personalizados</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="inactive-alert" id="inactive-alert">
-            ⚠️ <strong>Alerta de inactividad:</strong> Han pasado 14 días sin realizar ejercicio. ¡Es hora de volver a entrenar!
-        </div>
-        
-        <div class="crossfit-controls">
-            <div class="week-selector">
-                <button class="crossfit-btn" id="prev-week">◀ Anterior</button>
-                <div class="date-picker">
-                    <input type="date" id="date-selector">
-                    <button class="crossfit-btn" id="go-to-date">Ir</button>
-                </div>
-                <div class="current-week" id="current-week">Semana Actual</div>
-                <button class="crossfit-btn" id="next-week">Siguiente ▶</button>
-            </div>
-            <div>
-                <button class="crossfit-btn exercise-btn" id="exercises-button">➕ Ejercicios</button>
-                <button class="crossfit-btn" id="wod-button">WOD del Día</button>
-                <button class="crossfit-btn user-btn" id="users-button">👥 Usuarios</button>
-                <button class="crossfit-btn" id="export-button">Exportar</button>
-                <button class="crossfit-btn" id="reset-week">Reiniciar</button>
-            </div>
-        </div>
-        
-        <div class="wod-section" id="wod-section" style="display: none;">
-            <h3>WOD de CrossFit</h3>
-            <div class="wod-content" id="wod-content">
-                <p>Cargando WOD oficial...</p>
-            </div>
-            <div style="margin-top: 10px; text-align: center;">
-                <a href="https://www.crossfit.com/workout" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: bold;">
-                    🔗 Ver WOD completo en crossfit.com
-                </a>
-            </div>
-        </div>
-        
-        <div class="workout-table-container" id="table-container">
-            <!-- La tabla se cargará dinámicamente -->
-        </div>
-        
-        <div class="crossfit-sidebar">
-            <div class="stats-card">
-                <h3>Estadísticas Semanales</h3>
-                <div class="stat-item">
-                    <span>Completados:</span>
-                    <span id="completed-count">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Porcentaje:</span>
-                    <span id="completion-percent">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress" id="completion-bar" style="width: 0%"></div>
-                </div>
-                <div class="stat-item">
-                    <span>Días Activos:</span>
-                    <span id="active-days">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Más Realizado:</span>
-                    <span id="most-done">-</span>
-                </div>
-                <div class="stat-item">
-                    <span>Última Actividad:</span>
-                    <span id="last-activity">-</span>
-                </div>
-            </div>
-            
-            <div class="stats-card">
-                <h3>Próximos Ejercicios</h3>
-                <div class="exercise-list" id="pending-exercises">
-                    <div class="empty-day">No hay ejercicios pendientes</div>
-                </div>
-            </div>
-            
-            <div class="stats-card">
-                <h3>Opciones de Exportación</h3>
-                <div class="export-options">
-                    <button class="export-btn" id="export-csv">📊 Descargar CSV</button>
-                    <button class="export-btn" id="export-json">📁 Descargar JSON</button>
-                    <button class="export-btn" id="import-json">📤 Importar JSON</button>
-                    <input type="file" id="file-upload" accept=".json,.csv" style="display: none;">
-                    <button class="export-btn" id="export-print">🖨️ Imprimir</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="crossfit-footer">
-            <p>Planilla de Control CrossFit Mejorada - Gestión completa de ejercicios y usuarios</p>
-        </div>
-    </div>
+    <!-- Pantalla de Autenticación -->
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-card">
+            <img src="antologia_logo.png" alt="Logo Antología Box23" class="auth-logo">
+            <h2 class="text-center mb-1">Antología Box23</h2>
+            <p class="text-center text-muted mb-4">Sistema de Seguimiento de Entrenamiento</p>
 
-    <!-- Modal para gestión de usuarios -->
-    <div class="modal" id="user-modal">
-        <div class="modal-content">
-            <h3>👥 Gestión de Usuarios</h3>
-            <div class="user-form">
-                <div class="form-group">
-                    <label for="user-name">Nombre del Usuario:</label>
-                    <input type="text" id="user-name" placeholder="Ej: Juan Pérez">
+            <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#loginPane" type="button" role="tab">Ingresar</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#registerPane" type="button" role="tab">Crear cuenta</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Login -->
+                <div class="tab-pane fade show active" id="loginPane" role="tabpanel">
+                    <div id="loginAlert" class="alert alert-danger d-none"></div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="loginUsername" required autocomplete="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="loginPassword" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                            <i class="fas fa-sign-in-alt"></i> Ingresar
+                        </button>
+                    </form>
                 </div>
-                
-                <div class="form-group">
-                    <label>Registros Máximos (RM) - Levantamiento:</label>
-                    <div id="rm-fields">
-                        <!-- Campos para RM se generarán dinámicamente -->
-                    </div>
+
+                <!-- Registro -->
+                <div class="tab-pane fade" id="registerPane" role="tabpanel">
+                    <div id="registerAlert" class="alert alert-danger d-none"></div>
+                    <form id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="regName" class="form-label">Nombre completo *</label>
+                                <input type="text" class="form-control" id="regName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="regPhone" class="form-label">Teléfono (10 dígitos) *</label>
+                                <input type="tel" class="form-control" id="regPhone" placeholder="3208009736" required maxlength="10">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="regCategory" class="form-label">Categoría *</label>
+                                <select class="form-select" id="regCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="principiante">Principiante</option>
+                                    <option value="intermedio">Intermedio</option>
+                                    <option value="avanzado">Avanzado</option>
+                                    <option value="elite">Élite</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="regWeight" class="form-label">Peso corporal (kg) *</label>
+                                <input type="number" step="0.1" class="form-control" id="regWeight" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regUsername" class="form-label">Usuario *</label>
+                            <input type="text" class="form-control" id="regUsername" required autocomplete="username">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="regPassword" class="form-label">Contraseña *</label>
+                                <input type="password" class="form-control" id="regPassword" required minlength="6" autocomplete="new-password">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="regPassword2" class="form-label">Confirmar contraseña *</label>
+                                <input type="password" class="form-control" id="regPassword2" required minlength="6" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regAdminCode" class="form-label">Código de entrenador/administrador (opcional)</label>
+                            <input type="text" class="form-control" id="regAdminCode" placeholder="Déjelo vacío si es un miembro del gimnasio">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                            <i class="fas fa-user-plus"></i> Crear cuenta
+                        </button>
+                    </form>
                 </div>
-                
-                <div class="form-group">
-                    <label>Progresiones Gimnásticas:</label>
-                    <div id="progression-fields">
-                        <!-- Campos para progresiones se generarán dinámicamente -->
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button class="crossfit-btn user-btn" id="save-user">Guardar Usuario</button>
-                    <button class="crossfit-btn" id="cancel-user">Cancelar</button>
-                </div>
-            </div>
-            
-            <div class="user-list" id="user-list-container">
-                <h4>Usuarios Registrados</h4>
-                <!-- Lista de usuarios se cargará aquí -->
             </div>
         </div>
     </div>
 
-    <!-- Modal para gestión de ejercicios -->
-    <div class="modal" id="exercise-modal">
-        <div class="modal-content">
-            <h3>➕ Gestión de Ejercicios</h3>
-            <div class="exercise-form">
-                <div class="form-group">
-                    <label for="exercise-name">Nombre del Ejercicio:</label>
-                    <input type="text" id="exercise-name" placeholder="Ej: Clean & Jerk">
+    <!-- Contenedor de la aplicación (oculto hasta iniciar sesión) -->
+    <div id="appContent" style="display:none;">
+
+    <!-- Modal Compartir WhatsApp -->
+    <div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="whatsappModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="whatsappModalLabel"><i class="fab fa-whatsapp"></i> Compartir Datos por WhatsApp</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="exercise-category">Categoría:</label>
-                    <select id="exercise-category">
-                        <option value="gymnastic">Gimnástico</option>
-                        <option value="endurance">Resistencia</option>
-                        <option value="weightlifting">Levantamiento</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="progression-group" style="display: none;">
-                    <label>Progresiones/Regresiones (Solo para ejercicios gimnásticos):</label>
-                    <div id="progression-options">
-                        <div class="progression-option">
-                            <input type="text" class="progression-input" placeholder="Ej: Pull-up con banda asistida" style="flex: 1;">
-                            <button type="button" class="delete-progression">✕</button>
+                <div class="modal-body">
+                    <div class="whatsapp-options">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="whatsappUserSelect" class="form-label">Seleccionar Usuario</label>
+                                <select class="form-select" id="whatsappUserSelect">
+                                    <option value="all">Todos los usuarios</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whatsappDataType" class="form-label">Tipo de Datos</label>
+                                <select class="form-select" id="whatsappDataType">
+                                    <option value="summary">Resumen</option>
+                                    <option value="rm">Solo RM</option>
+                                    <option value="progressions">Solo Gimnasticos</option>
+                                    <option value="all">Todos los datos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="includeCSV" checked>
+                            <label class="form-check-label" for="includeCSV">
+                                Incluir archivo CSV en el mensaje
+                            </label>
                         </div>
                     </div>
-                    <button type="button" class="add-progression-btn" id="add-progression">➕ Agregar Progresión</button>
+                    
+                    <div class="mb-3">
+                        <label for="whatsappMessage" class="form-label">Mensaje personalizado</label>
+                        <textarea class="form-control" id="whatsappMessage" rows="3" placeholder="Mensaje que acompañará los datos..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Vista previa del CSV</label>
+                        <div class="data-preview" id="csvPreview">
+                            Los datos CSV se generarán aquí...
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <span id="whatsappInfoText">
+                            El mensaje se enviará al instructor (3208009736). Los datos CSV se incluirán en el mensaje.
+                        </span>
+                    </div>
                 </div>
-                
-                <div class="form-actions">
-                    <button class="crossfit-btn exercise-btn" id="save-exercise">Guardar Ejercicio</button>
-                    <button class="crossfit-btn" id="cancel-exercise">Cancelar</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="downloadCSVBtn">
+                        <i class="fas fa-download"></i> Descargar CSV
+                    </button>
+                    <button type="button" class="btn btn-success" id="sendWhatsAppBtn">
+                        <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                    </button>
                 </div>
-            </div>
-            
-            <div class="exercise-list-container" id="exercise-list-container">
-                <h4>Ejercicios Disponibles</h4>
-                <!-- Lista de ejercicios se cargará aquí -->
             </div>
         </div>
     </div>
 
-    <script>
-        // Datos de ejercicios CrossFit con categorías
-        let exercises = [
-            // Ejercicios Gimnásticos
-            { 
-                name: "Pull-up", 
-                category: "gymnastic",
-                progressions: ["Pull-up con banda", "Jumping pull-up", "Pull-up estricto", "Weighted pull-up"],
-                custom: false
-            },
-            { 
-                name: "Push-up", 
-                category: "gymnastic",
-                progressions: ["Push-up en pared", "Push-up en rodillas", "Push-up completo", "Push-up con elevación"],
-                custom: false
-            },
-            { 
-                name: "Burpee", 
-                category: "gymnastic",
-                progressions: ["Burpee sin push-up", "Burpee completo", "Burpee con salto", "Burpee con pull-up"],
-                custom: false
-            },
-            { 
-                name: "Box Jump", 
-                category: "gymnastic",
-                progressions: ["Step-up", "Box jump bajo", "Box jump medio", "Box jump alto"],
-                custom: false
-            },
-            { 
-                name: "Handstand Push-up", 
-                category: "gymnastic",
-                progressions: ["Pike push-up", "Handstand contra pared", "Handstand push-up Kipping", "Handstand push-up completo", "Handstand push-up deficit"],
-                custom: false
-            },
-            { 
-                name: "Handstand walk", 
-                category: "gymnastic",
-                progressions: ["Handstand hold",  "Handstand Shoulder Taps", "Handstand wall lateral walking", "Handstand walk corto", "Handstand walk medio", "Handstand walk largo"],
-                custom: false
-            },
-            { 
-                name: "Wall walk", 
-                category: "gymnastic",
-                progressions: ["Inclinación contra pared", "Wall walk parcial", "Wall walk completo"],
-                custom: false
-            },
-            { 
-                name: "Toes-to-bar", 
-                category: "gymnastic",
-                progressions: ["Knee raises", "Toes-to-rig", "Toes-to-bar asistido", "Toes-to-bar completo", "Toes-to-bar enlazado"],
-                custom: false
-            },
-            { 
-                name: "Rope Climb", 
-                category: "gymnastic",
-                progressions: ["Rope pull", "Rope climb asistido", "Rope climb con piernas", "Rope climb sin piernas"],
-                custom: false
-            },
-            { 
-                name: "Muscle-up", 
-                category: "gymnastic",
-                progressions: ["Pull-up explosivo", "Transition drills", "Muscle-up con banda", "Muscle-up completo", "Muscle-up completo enlazado", "Muscle-up estricto"],
-                custom: false
-            },
-            
-            // Ejercicios de Resistencia
-            { name: "Row (remo)", category: "endurance", progressions: [], custom: false },
-            { name: "Run", category: "endurance", progressions: [], custom: false },
-            { name: "Double Under", category: "endurance", progressions: [], custom: false },
-            { name: "Kettlebell Swing", category: "endurance", progressions: [], custom: false },
-            { name: "Wall Ball", category: "endurance", progressions: [], custom: false },
-            
-            // Ejercicios de Levantamiento
-            { name: "Air Squat", category: "weightlifting", progressions: [], custom: false },
-            { name: "Deadlift", category: "weightlifting", progressions: [], custom: false },
-            { name: "Snatch", category: "weightlifting", progressions: [], custom: false },
-            { name: "Thruster", category: "weightlifting", progressions: [], custom: false },
-            { name: "Clean & Jerk", category: "weightlifting", progressions: [], custom: false },
-            { name: "Pistol Squat", category: "weightlifting", progressions: [], custom: false },
-            { name: "Front Squat", category: "weightlifting", progressions: [], custom: false },
-            { name: "Back Squat", category: "weightlifting", progressions: [], custom: false },
-            { name: "Clean", category: "weightlifting", progressions: [], custom: false }
-        ];
-        
-        // Ejercicios para RM (Registro Máximo)
-        const rmExercises = ["Deadlift", "Snatch", "Clean & Jerk", "Back Squat", "Front Squat", "Clean"];
-        
-        // Estado de la aplicación
-        let currentWeek = 0; // 0 = semana actual
-        let workoutData = {};
-        let usersData = [];
-        let editingUserId = null;
-        let editingExerciseId = null;
-        
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            loadWorkoutData();
-            loadUsersData();
-            loadCustomExercises();
-            renderTable();
-            updateStats();
-            setupEventListeners();
-            checkInactivity();
-            setupDateSelector();
-        });
-        
-        // Configurar selector de fecha
-        function setupDateSelector() {
-            const today = new Date();
-            const dateSelector = document.getElementById('date-selector');
-            dateSelector.value = today.toISOString().split('T')[0];
-            
-            // Calcular semana a partir de una fecha
-            document.getElementById('go-to-date').addEventListener('click', function() {
-                const selectedDate = new Date(dateSelector.value);
-                const today = new Date();
-                const diffTime = selectedDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                currentWeek = Math.floor(diffDays / 7);
-                renderTable();
-                updateStats();
-            });
-        }
-        
-        // Cargar datos del localStorage
-        function loadWorkoutData() {
-            const savedData = localStorage.getItem('crossfitWorkoutData');
-            if (savedData) {
-                workoutData = JSON.parse(savedData);
-            }
-            
-            // Inicializar semana actual si no existe
-            const weekKey = getWeekKey(currentWeek);
-            if (!workoutData[weekKey]) {
-                workoutData[weekKey] = initializeWeekData();
-                saveWorkoutData();
-            }
-        }
-        
-        // Guardar datos en localStorage
-        function saveWorkoutData() {
-            localStorage.setItem('crossfitWorkoutData', JSON.stringify(workoutData));
-        }
-        
-        // Cargar ejercicios personalizados
-        function loadCustomExercises() {
-            const savedExercises = localStorage.getItem('crossfitCustomExercises');
-            if (savedExercises) {
-                const customExercises = JSON.parse(savedExercises);
-                // Filtrar ejercicios predeterminados y agregar los personalizados
-                exercises = exercises.filter(e => !e.custom);
-                exercises = exercises.concat(customExercises);
-            }
-        }
-        
-        // Guardar ejercicios personalizados
-        function saveCustomExercises() {
-            const customExercises = exercises.filter(e => e.custom);
-            localStorage.setItem('crossfitCustomExercises', JSON.stringify(customExercises));
-        }
-        
-        // Cargar datos de usuarios
-        function loadUsersData() {
-            const savedUsers = localStorage.getItem('crossfitUsersData');
-            if (savedUsers) {
-                usersData = JSON.parse(savedUsers);
-            }
-        }
-        
-        // Guardar datos de usuarios
-        function saveUsersData() {
-            localStorage.setItem('crossfitUsersData', JSON.stringify(usersData));
-        }
-        
-        // Inicializar datos de la semana para TODOS los ejercicios
-        function initializeWeekData() {
-            const weekData = {};
-            exercises.forEach(exercise => {
-                weekData[exercise.name] = [false, false, false, false, false, false, false];
-            });
-            return weekData;
-        }
-        
-        // Obtener clave de la semana
-        function getWeekKey(weekOffset) {
-            const today = new Date();
-            const firstDayOfWeek = new Date(today);
-            firstDayOfWeek.setDate(today.getDate() - today.getDay() + 1 + (weekOffset * 7));
-            
-            const year = firstDayOfWeek.getFullYear();
-            const month = firstDayOfWeek.getMonth() + 1;
-            const day = firstDayOfWeek.getDate();
-            
-            return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        }
-        
-        // Obtener nombre de la semana
-        function getWeekName(weekOffset) {
-            const today = new Date();
-            const firstDayOfWeek = new Date(today);
-            firstDayOfWeek.setDate(today.getDate() - today.getDay() + 1 + (weekOffset * 7));
-            
-            const lastDayOfWeek = new Date(firstDayOfWeek);
-            lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-            
-            const options = { month: 'short', day: 'numeric' };
-            return `Semana ${firstDayOfWeek.toLocaleDateString('es-ES', options)} - ${lastDayOfWeek.toLocaleDateString('es-ES', options)}`;
-        }
-        
-        // Renderizar la tabla - AHORA INICIALIZA SEMANAS INEXISTENTES
-        function renderTable() {
-            const container = document.getElementById('table-container');
-            const weekKey = getWeekKey(currentWeek);
-            
-            // Si la semana no existe, inicializarla
-            if (!workoutData[weekKey]) {
-                workoutData[weekKey] = initializeWeekData();
-                saveWorkoutData();
-            }
-            
-            const weekData = workoutData[weekKey];
-            
-            // Verificar si hay datos en esta semana
-            let hasData = false;
-            Object.keys(weekData).forEach(exerciseName => {
-                if (weekData[exerciseName].some(day => day === true)) {
-                    hasData = true;
-                }
-            });
-            
-            if (!hasData && currentWeek !== 0) {
-                // Mostrar mensaje para semanas sin datos
-                container.innerHTML = `
-                    <div class="week-empty">
-                        <h3>Semana ${getWeekName(currentWeek)}</h3>
-                        <p>No hay registros para esta semana.</p>
-                        <p>¿Deseas inicializar la semana para comenzar a registrar ejercicios?</p>
-                        <button id="initialize-week">Inicializar Semana</button>
+    <!-- Modal para Vista Previa de Carga CSV -->
+    <div class="modal fade" id="csvPreviewModal" tabindex="-1" aria-labelledby="csvPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="csvPreviewModalLabel"><i class="fas fa-file-csv"></i> Vista Previa de Carga de Usuarios desde CSV</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Atención:</strong> Se detectaron usuarios duplicados. Revise los cambios antes de confirmar.
                     </div>
-                `;
-                
-                document.getElementById('initialize-week').addEventListener('click', function() {
-                    // Asegurarse de que todos los ejercicios estén inicializados
-                    exercises.forEach(exercise => {
-                        if (!weekData[exercise.name]) {
-                            weekData[exercise.name] = [false, false, false, false, false, false, false];
-                        }
-                    });
-                    saveWorkoutData();
-                    renderTable(); // Volver a renderizar
-                });
-                
-                return;
-            }
-            
-            // Renderizar tabla normal
-            let tableHTML = `
-                <table class="workout-table" id="workout-table">
-                    <thead>
-                        <tr>
-                            <th>Ejercicios</th>
-                            <th class="day-header">Lun</th>
-                            <th class="day-header">Mar</th>
-                            <th class="day-header">Mié</th>
-                            <th class="day-header">Jue</th>
-                            <th class="day-header">Vie</th>
-                            <th class="day-header">Sáb</th>
-                            <th class="day-header">Dom</th>
-                        </tr>
-                    </thead>
-                    <tbody id="exercises-body">
-            `;
-            
-            // Agrupar ejercicios por categoría
-            const groupedExercises = {
-                gymnastic: exercises.filter(e => e.category === 'gymnastic'),
-                endurance: exercises.filter(e => e.category === 'endurance'),
-                weightlifting: exercises.filter(e => e.category === 'weightlifting')
-            };
-            
-            // Renderizar ejercicios por categoría
-            Object.keys(groupedExercises).forEach(category => {
-                if (groupedExercises[category].length > 0) {
-                    tableHTML += `
-                        <tr>
-                            <td colspan="8" style="background: ${getCategoryColor(category)}; color: white; font-weight: bold; text-align: center; font-size: 0.9em;">
-                                ${category === 'gymnastic' ? 'GIMNÁSTICOS' : category === 'endurance' ? 'RESISTENCIA' : 'LEVANTAMIENTO'}
-                            </td>
-                        </tr>
-                    `;
                     
-                    groupedExercises[category].forEach(exercise => {
-                        // Asegurar que el ejercicio exista en los datos de la semana
-                        if (!weekData[exercise.name]) {
-                            weekData[exercise.name] = [false, false, false, false, false, false, false];
-                        }
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="newUsersCount">0</h4>
+                                    <p class="mb-0">Nuevos usuarios</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-warning text-dark">
+                                <div class="card-body text-center">
+                                    <h4 id="updatedUsersCount">0</h4>
+                                    <p class="mb-0">Usuarios a actualizar</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="unchangedUsersCount">0</h4>
+                                    <p class="mb-0">Sin cambios</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover csv-preview-table" id="csvPreviewTable">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                    <th>Categoría</th>
+                                    <th>Peso (kg)</th>
+                                    <th>Acción</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody id="csvPreviewContent">
+                                <!-- Contenido generado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i>
+                        <small>
+                            <strong>Leyenda:</strong> 
+                            <span class="badge bg-success csv-status-badge">Nuevo</span> - Usuario no existente, 
+                            <span class="badge bg-warning csv-status-badge">Actualizar</span> - Usuario existente con cambios, 
+                            <span class="badge bg-info csv-status-badge">Sin cambios</span> - Usuario existente sin modificaciones,
+                            <span class="badge bg-danger csv-status-badge">Error</span> - Datos inválidos
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="confirmCSVUpload">
+                        <i class="fas fa-check-circle"></i> Confirmar Carga
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para GIFs de ejercicios -->
+    <div class="modal fade" id="exerciseGifModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exerciseGifModalLabel">
+                        <i class="fas fa-running"></i> Demostración del Ejercicio
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 id="exerciseGifName"></h4>
+                    <video id="exerciseGifPreview" class="gif-preview img-fluid" style="max-height: 400px; display: none;" controls muted loop playsinline></video>
+                    <div id="exerciseGifPlaceholder" class="gif-placeholder mt-3" style="width: 100%; height: 300px;">
+                        <i class="fas fa-question-circle fa-3x mb-3"></i><br>
+                        <p>GIF no disponible para este ejercicio</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Usuario -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel"><i class="fas fa-user-plus"></i> Registrar Nuevo Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userName" class="form-label">Nombre completo *</label>
+                                <input type="text" class="form-control" id="userName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="userPhone" class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="userPhone" placeholder="3208009736" required>
+                                <div class="phone-validation-error" id="userPhoneError">Formato inválido. Use 10 dígitos sin espacios ni símbolos.</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userCategory" class="form-label">Categoría *</label>
+                                <select class="form-select" id="userCategory" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="principiante">Principiante</option>
+                                    <option value="intermedio">Intermedio</option>
+                                    <option value="avanzado">Avanzado</option>
+                                    <option value="elite">Élite</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="userWeight" class="form-label">Peso corporal (kg) *</label>
+                                <input type="number" step="0.1" class="form-control" id="userWeight" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="userNotes" class="form-label">Notas adicionales (opcional)</label>
+                                <textarea class="form-control" id="userNotes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveUserBtn">Guardar Usuario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal RM Levantamiento -->
+    <div class="modal fade" id="rmModal" tabindex="-1" aria-labelledby="rmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rmModalLabel"><i class="fas fa-dumbbell"></i> Registrar Repetición Máxima (RM)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="rmForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="rmUser" class="form-label">Usuario *</label>
+                                <select class="form-select" id="rmUser" required>
+                                    <option value="">Seleccionar usuario</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="rmExercise" class="form-label">Ejercicio *</label>
+                                <select class="form-select" id="rmExercise" required>
+                                    <option value="">Seleccionar ejercicio de levantamiento</option>
+                                </select>
+                            </div>
+                        </div>
                         
-                        let extraInfo = '';
-                        if (usersData.length > 0) {
-                            const currentUser = usersData[0]; // Por ahora mostramos solo el primer usuario
-                            if (category === 'weightlifting' && currentUser.rm && currentUser.rm[exercise.name]) {
-                                extraInfo = `<div class="rm-display">RM: ${currentUser.rm[exercise.name]} kg</div>`;
-                            } else if (category === 'gymnastic' && currentUser.progressions && currentUser.progressions[exercise.name]) {
-                                extraInfo = `<div class="progression-display">Nivel: ${currentUser.progressions[exercise.name]}</div>`;
-                            }
-                        }
+                        <div class="mb-3" id="rmExerciseGifContainer" style="display: none;">
+                            <label class="form-label">Demostración del ejercicio:</label>
+                            <div class="exercise-gif-container">
+                                <video id="rmExerciseGif" class="gif-preview" style="display: none;" controls muted loop playsinline></video>
+                                <div id="rmExerciseGifPlaceholder" class="gif-placeholder">
+                                    <i class="fas fa-running fa-2x mb-2"></i><br>
+                                    GIF de demostración se cargará aquí
+                                </div>
+                            </div>
+                        </div>
                         
-                        // Mostrar progresiones para ejercicios gimnásticos
-                        if (category === 'gymnastic' && exercise.progressions && exercise.progressions.length > 0) {
-                            extraInfo += `<div class="progression-levels">`;
-                            exercise.progressions.forEach((prog, index) => {
-                                if (index < 3) { // Mostrar solo las primeras 3
-                                    extraInfo += `<span class="progression-level">${prog}</span>`;
-                                }
-                            });
-                            if (exercise.progressions.length > 3) {
-                                extraInfo += `<span class="progression-level">+${exercise.progressions.length - 3}</span>`;
-                            }
-                            extraInfo += `</div>`;
-                        }
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="rmWeight" class="form-label">Peso (kg) *</label>
+                                <input type="number" step="0.1" class="form-control" id="rmWeight" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="rmReps" class="form-label">Repeticiones *</label>
+                                <input type="number" class="form-control" id="rmReps" min="1" max="10" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="rmDate" class="form-label">Fecha *</label>
+                                <input type="date" class="form-control" id="rmDate" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="rmNotes" class="form-label">Notas (opcional)</label>
+                                <textarea class="form-control" id="rmNotes" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-calculator"></i> <strong>Calculadora de 1RM:</strong>
+                            <div id="rmCalculation" class="mt-2">
+                                <div class="rm-value">1RM estimado: <span id="estimatedRM">0</span> kg</div>
+                                <small>Fórmula Brzycki: 1RM = Peso / (1.0278 - 0.0278 × Repeticiones)</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveRMBtn">Guardar RM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Progresión -->
+    <div class="modal fade" id="progressionModal" tabindex="-1" aria-labelledby="progressionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressionModalLabel"><i class="fas fa-chart-line"></i> Registrar Progresión</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="progressionForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="progressionUser" class="form-label">Usuario *</label>
+                                <select class="form-select" id="progressionUser" required>
+                                    <option value="">Seleccionar usuario</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="progressionExercise" class="form-label">Ejercicio *</label>
+                                <select class="form-select" id="progressionExercise" required>
+                                    <option value="">Seleccionar ejercicio gimnástico</option>
+                                </select>
+                            </div>
+                        </div>
                         
-                        tableHTML += `
-                            <tr>
-                                <td class="exercise-name">
-                                    <span class="exercise-category ${exercise.category} ${exercise.custom ? 'custom' : ''}"></span>
-                                    <div>
-                                        <div>${exercise.name} ${exercise.custom ? '★' : ''}</div>
-                                        ${extraInfo}
+                        <div class="mb-3" id="progressionExerciseGifContainer" style="display: none;">
+                            <label class="form-label">Demostración del ejercicio:</label>
+                            <div class="exercise-gif-container">
+                                <video id="progressionExerciseGif" class="gif-preview" style="display: none;" controls muted loop playsinline></video>
+                                <div id="progressionExerciseGifPlaceholder" class="gif-placeholder">
+                                    <i class="fas fa-running fa-2x mb-2"></i><br>
+                                    GIF de demostración se cargará aquí
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="progressionLevel" class="form-label">Nivel actual *</label>
+                                <select class="form-select" id="progressionLevel" required>
+                                    <option value="">Seleccionar nivel alcanzado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="progressionDate" class="form-label">Fecha *</label>
+                                <input type="date" class="form-control" id="progressionDate" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="progressionDetails" class="form-label">Detalles de ejecución (opcional)</label>
+                                <textarea class="form-control" id="progressionDetails" rows="3" placeholder="Ej: Pull-up con banda, 3 series de 5 repeticiones..."></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="nextGoal" class="form-label">Próxima meta</label>
+                                <select class="form-select" id="nextGoal">
+                                    <option value="">Seleccionar próxima progresión</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveProgressionBtn">Guardar Progresión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Progreso Usuario -->
+    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressModalLabel"><i class="fas fa-chart-bar"></i> Progreso del Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="progressContent">
+                        <!-- Contenido generado dinámicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container-fluid py-3 position-relative">
+
+        <!-- Logo en la esquina superior derecha -->
+        <img src="antologia_logo.png"
+             alt="Logo Antología Box23"
+             class="logo-img d-none d-md-block" style="position: absolute; top: 20px; right: 20px; width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #fff; z-index: 1000;">
+
+        <div class="user-session-bar">
+            <span><i class="fas fa-user-circle"></i> <span id="sessionUserName"></span> <span class="badge bg-secondary" id="sessionUserRole"></span></span>
+            <button class="btn btn-sm btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center mb-4">
+            <h1 class="text-center flex-grow-1">
+                <i class="fas fa-dumbbell"></i> Antología Box23 - Sistema de Seguimiento
+            </h1>
+        </div>
+        <p class="text-center mb-4">PRIMERO NOS MOVEMOS BIEN DESPUES NOS MOVEMOS MÁS</p>
+
+        <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                    <i class="fas fa-users"></i> Usuarios
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rm-tab" data-bs-toggle="tab" data-bs-target="#rm" type="button" role="tab">
+                    <i class="fas fa-weight-hanging"></i> RM Levantamiento
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="progressions-tab" data-bs-toggle="tab" data-bs-target="#progressions" type="button" role="tab">
+                    <i class="fas fa-chart-line"></i> Gimnasticos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tracking-tab" data-bs-toggle="tab" data-bs-target="#tracking" type="button" role="tab">
+                    <i class="fas fa-calendar-check"></i> Seguimiento
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button" role="tab">
+                    <i class="fas fa-database"></i> Datos
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="mainTabContent">
+            <!-- Pestaña Usuarios -->
+            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-user-plus"></i> Registrar Usuario</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary w-100 mb-3 admin-only" data-bs-toggle="modal" data-bs-target="#userModal">
+                                    <i class="fas fa-plus-circle"></i> Nuevo Usuario
+                                </button>
+                                <p class="text-muted small member-only d-none"><i class="fas fa-info-circle"></i> Puede editar su propio perfil desde la lista.</p>
+                                <div class="summary-card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Resumen de Usuarios</h6>
+                                        <div class="row text-center mt-3">
+                                            <div class="col-6">
+                                                <h4 id="totalUsers">0</h4>
+                                                <small>Total</small>
+                                            </div>
+                                            <div class="col-6">
+                                                <h4 id="activeUsers">0</h4>
+                                                <small>Activos</small>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> Registre usuarios para comenzar el seguimiento de su entrenamiento.
+                                            </small>
+                                        </div>
                                     </div>
-                                </td>
-                        `;
-                        
-                        // Celdas para cada día de la semana
-                        for (let day = 0; day < 7; day++) {
-                            const isCompleted = weekData[exercise.name][day];
-                            tableHTML += `
-                                <td>
-                                    <div class="${isCompleted ? 'completed' : 'not-completed'}" 
-                                         data-exercise="${exercise.name}" 
-                                         data-day="${day}">
-                                        ${isCompleted ? '✓' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="fas fa-users"></i> Lista de Usuarios</h5>
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="form-control" id="searchUserInput" placeholder="Buscar usuario...">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="usersTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Teléfono</th>
+                                                <th>Categoría</th>
+                                                <th>Peso</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersList">
+                                            <!-- Usuarios cargados dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pestaña RM Levantamiento -->
+            <div class="tab-pane fade" id="rm" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-dumbbell"></i> Registrar RM</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#rmModal">
+                                    <i class="fas fa-plus-circle"></i> Nuevo Registro RM
+                                </button>
+                                <div class="summary-card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Calculadora 1RM</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Peso (kg)</label>
+                                            <input type="number" class="form-control" id="calcWeight" step="0.1" placeholder="Ej: 50">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Repeticiones</label>
+                                            <input type="number" class="form-control" id="calcReps" min="1" max="10" placeholder="Ej: 5">
+                                        </div>
+                                        <button class="btn btn-success w-100" id="calculateRM">Calcular 1RM</button>
+                                        <div class="mt-3 text-center">
+                                            <h4 id="calculatedRM">0 kg</h4>
+                                            <small>1RM Estimado</small>
+                                        </div>
                                     </div>
-                                </td>
-                            `;
-                        }
-                        
-                        tableHTML += `</tr>`;
-                    });
-                }
-            });
-            
-            tableHTML += `</tbody></table>`;
-            container.innerHTML = tableHTML;
-            
-            // Actualizar el nombre de la semana
-            document.getElementById('current-week').textContent = getWeekName(currentWeek);
-            
-            // Re-asignar event listeners a los checkboxes
-            setTimeout(() => {
-                document.getElementById('workout-table').addEventListener('click', function(e) {
-                    if (e.target.classList.contains('completed') || e.target.classList.contains('not-completed')) {
-                        const exercise = e.target.dataset.exercise;
-                        const day = parseInt(e.target.dataset.day);
-                        
-                        const weekKey = getWeekKey(currentWeek);
-                        workoutData[weekKey][exercise][day] = !workoutData[weekKey][exercise][day];
-                        
-                        saveWorkoutData();
-                        renderTable();
-                        updateStats();
-                        updateLastActivity();
-                    }
-                });
-            }, 100);
-        }
-        
-        // Obtener color de categoría
-        function getCategoryColor(category) {
-            switch(category) {
-                case 'gymnastic': return 'var(--gymnastic)';
-                case 'endurance': return 'var(--endurance)';
-                case 'weightlifting': return 'var(--weightlifting)';
-                default: return 'var(--secondary)';
-            }
-        }
-        
-        // Actualizar estadísticas
-        function updateStats() {
-            const weekKey = getWeekKey(currentWeek);
-            const weekData = workoutData[weekKey];
-            
-            let completedCount = 0;
-            let totalExercises = exercises.length * 7;
-            let lastActivityDate = null;
-            
-            // Contar ejercicios completados y encontrar última actividad
-            exercises.forEach(exercise => {
-                if (weekData[exercise.name]) {
-                    weekData[exercise.name].forEach((completed, dayIndex) => {
-                        if (completed) {
-                            completedCount++;
-                            // Calcular fecha de este día
-                            const today = new Date();
-                            const firstDayOfWeek = new Date(today);
-                            firstDayOfWeek.setDate(today.getDate() - today.getDay() + 1 + (currentWeek * 7));
-                            const activityDate = new Date(firstDayOfWeek);
-                            activityDate.setDate(firstDayOfWeek.getDate() + dayIndex);
-                            
-                            if (!lastActivityDate || activityDate > lastActivityDate) {
-                                lastActivityDate = activityDate;
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Mostrar última actividad
-            if (lastActivityDate) {
-                document.getElementById('last-activity').textContent = lastActivityDate.toLocaleDateString('es-ES');
-            } else {
-                document.getElementById('last-activity').textContent = "Nunca";
-            }
-            
-            // Calcular porcentaje
-            const completionPercent = Math.round((completedCount / totalExercises) * 100);
-            
-            // Contar días activos
-            let activeDays = 0;
-            for (let day = 0; day < 7; day++) {
-                let dayHasExercise = false;
-                exercises.forEach(exercise => {
-                    if (weekData[exercise.name] && weekData[exercise.name][day]) {
-                        dayHasExercise = true;
-                    }
-                });
-                if (dayHasExercise) activeDays++;
-            }
-            
-            // Encontrar ejercicio más realizado
-            let exerciseCounts = {};
-            exercises.forEach(exercise => {
-                if (weekData[exercise.name]) {
-                    exerciseCounts[exercise.name] = weekData[exercise.name].filter(completed => completed).length;
-                }
-            });
-            
-            let mostDoneExercise = "-";
-            let maxCount = 0;
-            
-            for (const [exercise, count] of Object.entries(exerciseCounts)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    mostDoneExercise = exercise;
-                }
-            }
-            
-            // Actualizar UI
-            document.getElementById('completed-count').textContent = completedCount;
-            document.getElementById('completion-percent').textContent = `${completionPercent}%`;
-            document.getElementById('completion-bar').style.width = `${completionPercent}%`;
-            document.getElementById('active-days').textContent = activeDays;
-            document.getElementById('most-done').textContent = mostDoneExercise;
-            
-            // Actualizar lista de ejercicios pendientes
-            updatePendingExercises(weekData);
-        }
-        
-        // Verificar inactividad (14 días sin ejercicio)
-        function checkInactivity() {
-            const lastActivity = localStorage.getItem('crossfitLastActivity');
-            if (lastActivity) {
-                const lastActivityDate = new Date(lastActivity);
-                const today = new Date();
-                const diffTime = today - lastActivityDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays >= 14) {
-                    document.getElementById('inactive-alert').style.display = 'block';
-                } else {
-                    document.getElementById('inactive-alert').style.display = 'none';
-                }
-            }
-        }
-        
-        // Actualizar última actividad
-        function updateLastActivity() {
-            localStorage.setItem('crossfitLastActivity', new Date().toISOString());
-            checkInactivity();
-        }
-        
-        // Actualizar lista de ejercicios pendientes
-        function updatePendingExercises(weekData) {
-            const pendingContainer = document.getElementById('pending-exercises');
-            pendingContainer.innerHTML = '';
-            
-            const today = new Date().getDay();
-            const adjustedToday = today === 0 ? 6 : today - 1;
-            
-            let hasPending = false;
-            
-            exercises.forEach(exercise => {
-                // Si el ejercicio no se ha hecho hoy
-                if (weekData[exercise.name] && !weekData[exercise.name][adjustedToday]) {
-                    const exerciseItem = document.createElement('div');
-                    exerciseItem.className = 'exercise-item';
-                    
-                    // Resaltar si es un ejercicio fundamental
-                    const fundamentalExercises = ["Pull-up", "Push-up", "Air Squat", "Deadlift"];
-                    if (fundamentalExercises.includes(exercise.name)) {
-                        exerciseItem.classList.add('highlight');
-                    }
-                    
-                    exerciseItem.innerHTML = `
-                        <span>${exercise.name}</span>
-                        <button class="mark-done" data-exercise="${exercise.name}" style="background:var(--success);color:white;border:none;border-radius:3px;padding:2px 6px;cursor:pointer;">✓</button>
-                    `;
-                    
-                    pendingContainer.appendChild(exerciseItem);
-                    hasPending = true;
-                }
-            });
-            
-            if (!hasPending) {
-                pendingContainer.innerHTML = '<div class="empty-day">¡Todos los ejercicios completados hoy!</div>';
-            }
-        }
-        
-        // Configurar campos de RM y progresiones para usuarios
-        function setupUserForm() {
-            const rmFields = document.getElementById('rm-fields');
-            const progressionFields = document.getElementById('progression-fields');
-            
-            rmFields.innerHTML = '';
-            progressionFields.innerHTML = '';
-            
-            // Campos para RM (solo ejercicios de levantamiento)
-            const weightliftingExercises = exercises.filter(e => e.category === 'weightlifting');
-            weightliftingExercises.forEach(exercise => {
-                const div = document.createElement('div');
-                div.style.marginBottom = '5px';
-                div.innerHTML = `
-                    <label style="font-size:0.9em;">${exercise.name}:</label>
-                    <input type="number" id="rm-${exercise.name.replace(/\s+/g, '-')}" placeholder="kg" style="width:80px; margin-left:5px;">
-                `;
-                rmFields.appendChild(div);
-            });
-            
-            // Campos para progresiones (solo ejercicios gimnásticos)
-            const gymnasticExercises = exercises.filter(e => e.category === 'gymnastic');
-            gymnasticExercises.forEach(exercise => {
-                const div = document.createElement('div');
-                div.style.marginBottom = '5px';
-                
-                let optionsHTML = '<option value="">Seleccionar progresión</option>';
-                if (exercise.progressions && exercise.progressions.length > 0) {
-                    exercise.progressions.forEach(progression => {
-                        optionsHTML += `<option value="${progression}">${progression}</option>`;
-                    });
-                } else {
-                    optionsHTML = `
-                        <option value="">Seleccionar progresión</option>
-                        <option value="Principiante">Principiante</option>
-                        <option value="Intermedio">Intermedio</option>
-                        <option value="Avanzado">Avanzado</option>
-                    `;
-                }
-                
-                div.innerHTML = `
-                    <label style="font-size:0.9em;">${exercise.name}:</label>
-                    <select id="progression-${exercise.name.replace(/\s+/g, '-')}" style="margin-left:5px; max-width:200px;">
-                        ${optionsHTML}
-                    </select>
-                `;
-                progressionFields.appendChild(div);
-            });
-        }
-        
-        // Mostrar modal de usuarios
-        function showUserModal(user = null) {
-            const modal = document.getElementById('user-modal');
-            modal.style.display = 'flex';
-            
-            setupUserForm();
-            
-            if (user) {
-                // Estamos editando un usuario existente
-                editingUserId = user.id;
-                document.getElementById('user-name').value = user.name;
-                
-                // Llenar campos de RM
-                if (user.rm) {
-                    Object.keys(user.rm).forEach(exercise => {
-                        const input = document.getElementById(`rm-${exercise.replace(/\s+/g, '-')}`);
-                        if (input) input.value = user.rm[exercise];
-                    });
-                }
-                
-                // Llenar campos de progresiones
-                if (user.progressions) {
-                    Object.keys(user.progressions).forEach(exercise => {
-                        const select = document.getElementById(`progression-${exercise.replace(/\s+/g, '-')}`);
-                        if (select) select.value = user.progressions[exercise];
-                    });
-                }
-            } else {
-                // Estamos creando un nuevo usuario
-                editingUserId = null;
-                document.getElementById('user-name').value = '';
-                
-                // Limpiar campos
-                const weightliftingExercises = exercises.filter(e => e.category === 'weightlifting');
-                weightliftingExercises.forEach(exercise => {
-                    const input = document.getElementById(`rm-${exercise.name.replace(/\s+/g, '-')}`);
-                    if (input) input.value = '';
-                });
-                
-                const gymnasticExercises = exercises.filter(e => e.category === 'gymnastic');
-                gymnasticExercises.forEach(exercise => {
-                    const select = document.getElementById(`progression-${exercise.name.replace(/\s+/g, '-')}`);
-                    if (select) select.value = '';
-                });
-            }
-            
-            renderUserList();
-        }
-        
-        // Mostrar modal de ejercicios
-        function showExerciseModal(exercise = null) {
-            const modal = document.getElementById('exercise-modal');
-            modal.style.display = 'flex';
-            
-            // Mostrar/ocultar campo de progresiones según categoría
-            const categorySelect = document.getElementById('exercise-category');
-            const progressionGroup = document.getElementById('progression-group');
-            
-            categorySelect.addEventListener('change', function() {
-                if (this.value === 'gymnastic') {
-                    progressionGroup.style.display = 'block';
-                } else {
-                    progressionGroup.style.display = 'none';
-                }
-            });
-            
-            // Configurar botón para agregar progresiones
-            document.getElementById('add-progression').addEventListener('click', function() {
-                const progressionOptions = document.getElementById('progression-options');
-                const newOption = document.createElement('div');
-                newOption.className = 'progression-option';
-                newOption.innerHTML = `
-                    <input type="text" class="progression-input" placeholder="Ej: Pull-up con banda asistida" style="flex: 1;">
-                    <button type="button" class="delete-progression">✕</button>
-                `;
-                progressionOptions.appendChild(newOption);
-                
-                // Agregar event listener al botón de eliminar
-                newOption.querySelector('.delete-progression').addEventListener('click', function() {
-                    newOption.remove();
-                });
-            });
-            
-            // Agregar event listeners a los botones de eliminar existentes
-            document.querySelectorAll('.delete-progression').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.parentElement.remove();
-                });
-            });
-            
-            if (exercise) {
-                // Estamos editando un ejercicio existente
-                editingExerciseId = exercise.id || exercise.name;
-                document.getElementById('exercise-name').value = exercise.name;
-                document.getElementById('exercise-category').value = exercise.category;
-                
-                // Mostrar progresiones si es gimnástico
-                if (exercise.category === 'gymnastic') {
-                    progressionGroup.style.display = 'block';
-                    const progressionOptions = document.getElementById('progression-options');
-                    progressionOptions.innerHTML = '';
-                    
-                    if (exercise.progressions && exercise.progressions.length > 0) {
-                        exercise.progressions.forEach(progression => {
-                            const newOption = document.createElement('div');
-                            newOption.className = 'progression-option';
-                            newOption.innerHTML = `
-                                <input type="text" class="progression-input" value="${progression}" style="flex: 1;">
-                                <button type="button" class="delete-progression">✕</button>
-                            `;
-                            progressionOptions.appendChild(newOption);
-                            
-                            // Agregar event listener al botón de eliminar
-                            newOption.querySelector('.delete-progression').addEventListener('click', function() {
-                                newOption.remove();
-                            });
-                        });
-                    }
-                }
-            } else {
-                // Estamos creando un nuevo ejercicio
-                editingExerciseId = null;
-                document.getElementById('exercise-name').value = '';
-                document.getElementById('exercise-category').value = 'gymnastic';
-                progressionGroup.style.display = 'block';
-                
-                // Limpiar progresiones
-                const progressionOptions = document.getElementById('progression-options');
-                progressionOptions.innerHTML = `
-                    <div class="progression-option">
-                        <input type="text" class="progression-input" placeholder="Ej: Pull-up con banda asistida" style="flex: 1;">
-                        <button type="button" class="delete-progression">✕</button>
-                    </div>
-                `;
-                
-                // Agregar event listener al botón de eliminar
-                document.querySelector('.delete-progression').addEventListener('click', function() {
-                    this.parentElement.remove();
-                });
-            }
-            
-            renderExerciseList();
-        }
-        
-        // Renderizar lista de usuarios
-        function renderUserList() {
-            const container = document.getElementById('user-list-container');
-            container.innerHTML = '<h4>Usuarios Registrados</h4>';
-            
-            if (usersData.length === 0) {
-                container.innerHTML += '<p class="empty-day">No hay usuarios registrados</p>';
-                return;
-            }
-            
-            usersData.forEach(user => {
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                
-                // Contar RMs registrados
-                const rmCount = user.rm ? Object.keys(user.rm).filter(key => user.rm[key]).length : 0;
-                const progressionCount = user.progressions ? Object.keys(user.progressions).filter(key => user.progressions[key]).length : 0;
-                
-                userItem.innerHTML = `
-                    <div class="user-info">
-                        <div class="user-name">${user.name}</div>
-                        <div class="user-stats">${rmCount} RMs • ${progressionCount} progresiones</div>
-                    </div>
-                    <div class="user-actions">
-                        <button class="crossfit-btn user-btn edit-user" data-id="${user.id}" style="padding:5px 8px; font-size:0.8em;">Editar</button>
-                        <button class="crossfit-btn delete-user" data-id="${user.id}" style="padding:5px 8px; font-size:0.8em; background:var(--danger);">Eliminar</button>
-                    </div>
-                `;
-                
-                container.appendChild(userItem);
-            });
-            
-            // Agregar event listeners a los botones
-            document.querySelectorAll('.edit-user').forEach(button => {
-                button.addEventListener('click', function() {
-                    const userId = parseInt(this.dataset.id);
-                    const user = usersData.find(u => u.id === userId);
-                    if (user) showUserModal(user);
-                });
-            });
-            
-            document.querySelectorAll('.delete-user').forEach(button => {
-                button.addEventListener('click', function() {
-                    const userId = parseInt(this.dataset.id);
-                    if (confirm('¿Estás seguro de eliminar este usuario?')) {
-                        usersData = usersData.filter(u => u.id !== userId);
-                        saveUsersData();
-                        renderUserList();
-                        renderTable(); // Actualizar tabla para reflejar cambios
-                    }
-                });
-            });
-        }
-        
-        // Renderizar lista de ejercicios
-        function renderExerciseList() {
-            const container = document.getElementById('exercise-list-container');
-            container.innerHTML = '<h4>Ejercicios Disponibles</h4>';
-            
-            // Agrupar ejercicios por categoría
-            const groupedExercises = {
-                gymnastic: exercises.filter(e => e.category === 'gymnastic'),
-                endurance: exercises.filter(e => e.category === 'endurance'),
-                weightlifting: exercises.filter(e => e.category === 'weightlifting')
-            };
-            
-            Object.keys(groupedExercises).forEach(category => {
-                if (groupedExercises[category].length > 0) {
-                    const categoryTitle = document.createElement('h5');
-                    categoryTitle.style.margin = '10px 0 5px 0';
-                    categoryTitle.style.color = getCategoryColor(category);
-                    categoryTitle.textContent = category === 'gymnastic' ? 'Gimnásticos' : 
-                                                category === 'endurance' ? 'Resistencia' : 'Levantamiento';
-                    container.appendChild(categoryTitle);
-                    
-                    groupedExercises[category].forEach(exercise => {
-                        const exerciseItem = document.createElement('div');
-                        exerciseItem.className = 'exercise-item-list';
-                        
-                        let progressionsInfo = '';
-                        if (exercise.category === 'gymnastic' && exercise.progressions && exercise.progressions.length > 0) {
-                            progressionsInfo = `<div class="exercise-stats">${exercise.progressions.length} progresiones</div>`;
-                        }
-                        
-                        exerciseItem.innerHTML = `
-                            <div class="exercise-info">
-                                <div class="exercise-name-list">${exercise.name} ${exercise.custom ? '★' : ''}</div>
-                                ${progressionsInfo}
+                                </div>
                             </div>
-                            <div class="exercise-actions">
-                                ${exercise.custom ? `
-                                    <button class="crossfit-btn exercise-btn edit-exercise" data-name="${exercise.name}" style="padding:5px 8px; font-size:0.8em;">Editar</button>
-                                    <button class="crossfit-btn delete-exercise" data-name="${exercise.name}" style="padding:5px 8px; font-size:0.8em; background:var(--danger);">Eliminar</button>
-                                ` : '<span style="font-size:0.8em; color:#7f8c8d;">Predefinido</span>'}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-history"></i> Historial de RM</h5>
                             </div>
-                        `;
-                        
-                        container.appendChild(exerciseItem);
-                    });
-                }
-            });
-            
-            // Agregar event listeners a los botones (solo para ejercicios personalizados)
-            document.querySelectorAll('.edit-exercise').forEach(button => {
-                button.addEventListener('click', function() {
-                    const exerciseName = this.dataset.name;
-                    const exercise = exercises.find(e => e.name === exerciseName && e.custom);
-                    if (exercise) showExerciseModal(exercise);
-                });
-            });
-            
-            document.querySelectorAll('.delete-exercise').forEach(button => {
-                button.addEventListener('click', function() {
-                    const exerciseName = this.dataset.name;
-                    if (confirm(`¿Estás seguro de eliminar el ejercicio "${exerciseName}"?`)) {
-                        // Eliminar ejercicio de la lista
-                        exercises = exercises.filter(e => !(e.name === exerciseName && e.custom));
-                        
-                        // Eliminar ejercicio de los datos de todas las semanas
-                        Object.keys(workoutData).forEach(weekKey => {
-                            delete workoutData[weekKey][exerciseName];
-                        });
-                        
-                        saveCustomExercises();
-                        saveWorkoutData();
-                        showExerciseModal(); // Actualizar modal
-                        renderTable(); // Actualizar tabla principal
-                    }
-                });
-            });
-        }
-        
-        // Guardar usuario
-        function saveUser() {
-            const userName = document.getElementById('user-name').value.trim();
-            
-            if (!userName) {
-                alert('Por favor ingresa un nombre para el usuario');
-                return;
-            }
-            
-            // Recolectar datos de RM
-            const rmData = {};
-            const weightliftingExercises = exercises.filter(e => e.category === 'weightlifting');
-            weightliftingExercises.forEach(exercise => {
-                const input = document.getElementById(`rm-${exercise.name.replace(/\s+/g, '-')}`);
-                if (input && input.value) {
-                    rmData[exercise.name] = parseFloat(input.value);
-                }
-            });
-            
-            // Recolectar datos de progresiones
-            const progressionData = {};
-            const gymnasticExercises = exercises.filter(e => e.category === 'gymnastic');
-            gymnasticExercises.forEach(exercise => {
-                const select = document.getElementById(`progression-${exercise.name.replace(/\s+/g, '-')}`);
-                if (select && select.value) {
-                    progressionData[exercise.name] = select.value;
-                }
-            });
-            
-            if (editingUserId !== null) {
-                // Actualizar usuario existente
-                const userIndex = usersData.findIndex(u => u.id === editingUserId);
-                if (userIndex !== -1) {
-                    usersData[userIndex].name = userName;
-                    usersData[userIndex].rm = rmData;
-                    usersData[userIndex].progressions = progressionData;
-                }
-            } else {
-                // Crear nuevo usuario
-                const newUser = {
-                    id: usersData.length > 0 ? Math.max(...usersData.map(u => u.id)) + 1 : 1,
-                    name: userName,
-                    rm: rmData,
-                    progressions: progressionData,
-                    created: new Date().toISOString()
-                };
-                usersData.push(newUser);
-            }
-            
-            saveUsersData();
-            document.getElementById('user-modal').style.display = 'none';
-            renderTable(); // Actualizar tabla para mostrar RM y progresiones
-        }
-        
-        // Guardar ejercicio
-        function saveExercise() {
-            const exerciseName = document.getElementById('exercise-name').value.trim();
-            const exerciseCategory = document.getElementById('exercise-category').value;
-            
-            if (!exerciseName) {
-                alert('Por favor ingresa un nombre para el ejercicio');
-                return;
-            }
-            
-            // Verificar si el ejercicio ya existe (solo para personalizados)
-            const existingExercise = exercises.find(e => e.name === exerciseName && e.custom);
-            if (existingExercise && editingExerciseId !== existingExercise.name) {
-                alert('Ya existe un ejercicio personalizado con ese nombre');
-                return;
-            }
-            
-            // Recolectar progresiones si es gimnástico
-            let progressions = [];
-            if (exerciseCategory === 'gymnastic') {
-                const progressionInputs = document.querySelectorAll('.progression-input');
-                progressionInputs.forEach(input => {
-                    if (input.value.trim()) {
-                        progressions.push(input.value.trim());
-                    }
-                });
-                
-                if (progressions.length === 0) {
-                    alert('Por favor agrega al menos una progresión para el ejercicio gimnástico');
-                    return;
-                }
-            }
-            
-            if (editingExerciseId !== null) {
-                // Actualizar ejercicio existente
-                const exerciseIndex = exercises.findIndex(e => e.name === editingExerciseId && e.custom);
-                if (exerciseIndex !== -1) {
-                    exercises[exerciseIndex].name = exerciseName;
-                    exercises[exerciseIndex].category = exerciseCategory;
-                    if (exerciseCategory === 'gymnastic') {
-                        exercises[exerciseIndex].progressions = progressions;
-                    }
-                }
-            } else {
-                // Crear nuevo ejercicio personalizado
-                const newExercise = {
-                    name: exerciseName,
-                    category: exerciseCategory,
-                    progressions: exerciseCategory === 'gymnastic' ? progressions : [],
-                    custom: true
-                };
-                exercises.push(newExercise);
-                
-                // Agregar ejercicio a todas las semanas existentes
-                Object.keys(workoutData).forEach(weekKey => {
-                    workoutData[weekKey][exerciseName] = [false, false, false, false, false, false, false];
-                });
-            }
-            
-            saveCustomExercises();
-            saveWorkoutData();
-            document.getElementById('exercise-modal').style.display = 'none';
-            renderTable(); // Actualizar tabla principal
-            showExerciseModal(); // Actualizar modal de ejercicios
-        }
-        
-        // Configurar event listeners
-        function setupEventListeners() {
-            // Navegación entre semanas
-            document.getElementById('prev-week').addEventListener('click', function() {
-                currentWeek--;
-                renderTable();
-                updateStats();
-            });
-            
-            document.getElementById('next-week').addEventListener('click', function() {
-                currentWeek++;
-                renderTable();
-                updateStats();
-            });
-            
-            // Reiniciar semana
-            document.getElementById('reset-week').addEventListener('click', function() {
-                if (confirm('¿Reiniciar todos los ejercicios de esta semana?')) {
-                    const weekKey = getWeekKey(currentWeek);
-                    workoutData[weekKey] = initializeWeekData();
-                    saveWorkoutData();
-                    renderTable();
-                    updateStats();
-                }
-            });
-            
-            // Botón para consultar WOD
-            document.getElementById('wod-button').addEventListener('click', function() {
-                const wodSection = document.getElementById('wod-section');
-                const wodContent = document.getElementById('wod-content');
-                
-                if (wodSection.style.display === 'none') {
-                    wodSection.style.display = 'block';
-                    wodContent.innerHTML = '<p>Cargando WOD oficial...</p>';
-                    
-                    // Simulación de carga de WOD
-                    setTimeout(() => {
-                        const sampleWODs = [
-                            {
-                                title: "Fran",
-                                description: "21-15-9 repeticiones de Thruster (43/30 kg) y Pull-ups",
-                                time: "Para tiempo",
-                                level: "Avanzado"
-                            },
-                            {
-                                title: "Cindy",
-                                description: "AMRAP en 20 minutos: 5 Pull-ups, 10 Push-ups, 15 Air Squats",
-                                time: "20 minutos",
-                                level: "Intermedio"
-                            },
-                            {
-                                title: "Murph",
-                                description: "1 milla de carrera, 100 Pull-ups, 200 Push-ups, 300 Squats, 1 milla de carrera",
-                                time: "Para tiempo",
-                                level: "Avanzado"
-                            },
-                            {
-                                title: "Helen",
-                                description: "3 rondas de: 400m de carrera, 21 Kettlebell Swings (24/16 kg), 12 Pull-ups",
-                                time: "Para tiempo",
-                                level: "Intermedio"
-                            }
-                        ];
-                        
-                        const randomWOD = sampleWODs[Math.floor(Math.random() * sampleWODs.length)];
-                        
-                        wodContent.innerHTML = `
-                            <div class="wod-exercise">
-                                <h4>${randomWOD.title}</h4>
-                                <p><strong>Descripción:</strong> ${randomWOD.description}</p>
-                                <p><strong>Modalidad:</strong> ${randomWOD.time}</p>
-                                <p><strong>Nivel:</strong> ${randomWOD.level}</p>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="filterRMUser">
+                                            <option value="">Todos los usuarios</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="filterRMExercise">
+                                            <option value="">Todos los ejercicios</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="rmTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Usuario</th>
+                                                <th>Ejercicio</th>
+                                                <th>Peso</th>
+                                                <th>Reps</th>
+                                                <th>1RM</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rmList">
+                                            <!-- Registros RM cargados dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <p style="margin-top: 10px; font-style: italic;">Este es un WOD de ejemplo. Visita crossfit.com para el WOD oficial del día.</p>
-                        `;
-                    }, 1000);
-                } else {
-                    wodSection.style.display = 'none';
-                }
-            });
-            
-            // Gestión de usuarios
-            document.getElementById('users-button').addEventListener('click', function() {
-                showUserModal();
-            });
-            
-            document.getElementById('cancel-user').addEventListener('click', function() {
-                document.getElementById('user-modal').style.display = 'none';
-            });
-            
-            document.getElementById('save-user').addEventListener('click', saveUser);
-            
-            // Gestión de ejercicios
-            document.getElementById('exercises-button').addEventListener('click', function() {
-                showExerciseModal();
-            });
-            
-            document.getElementById('cancel-exercise').addEventListener('click', function() {
-                document.getElementById('exercise-modal').style.display = 'none';
-            });
-            
-            document.getElementById('save-exercise').addEventListener('click', saveExercise);
-            
-            // Cerrar modales al hacer clic fuera
-            document.getElementById('user-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
-            
-            document.getElementById('exercise-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
-            
-            // Exportar como CSV
-            document.getElementById('export-csv').addEventListener('click', function() {
-                const weekKey = getWeekKey(currentWeek);
-                const weekData = workoutData[weekKey];
-                const weekName = getWeekName(currentWeek);
-                
-                let csvContent = "Planilla de Control CrossFit - " + weekName + "\n\n";
-                csvContent += "Ejercicio,Categoría,Personalizado,Lun,Mar,Mié,Jue,Vie,Sáb,Dom\n";
-                
-                exercises.forEach(exercise => {
-                    let row = `"${exercise.name}","${exercise.category}","${exercise.custom ? 'Sí' : 'No'}"`;
-                    for (let day = 0; day < 7; day++) {
-                        row += ',' + (weekData[exercise.name] && weekData[exercise.name][day] ? 'Sí' : 'No');
-                    }
-                    csvContent += row + '\n';
-                });
-                
-                // Añadir estadísticas
-                csvContent += "\nEstadísticas:\n";
-                csvContent += `Ejercicios Completados,${document.getElementById('completed-count').textContent}\n`;
-                csvContent += `Porcentaje de Completitud,${document.getElementById('completion-percent').textContent}\n`;
-                csvContent += `Días Activos,${document.getElementById('active-days').textContent}\n`;
-                csvContent += `Ejercicio Más Realizado,${document.getElementById('most-done').textContent}\n`;
-                csvContent += `Última Actividad,${document.getElementById('last-activity').textContent}\n`;
-                
-                // Añadir datos de usuarios si existen
-                if (usersData.length > 0) {
-                    csvContent += "\nUsuarios y Registros:\n";
-                    csvContent += "Nombre,Ejercicio,Tipo,Valor\n";
-                    usersData.forEach(user => {
-                        if (user.rm) {
-                            Object.keys(user.rm).forEach(exercise => {
-                                csvContent += `"${user.name}","${exercise}","RM","${user.rm[exercise]} kg"\n`;
-                            });
-                        }
-                        if (user.progressions) {
-                            Object.keys(user.progressions).forEach(exercise => {
-                                csvContent += `"${user.name}","${exercise}","Progresión","${user.progressions[exercise]}"\n`;
-                            });
-                        }
-                    });
-                }
-                
-                // Añadir ejercicios personalizados con progresiones
-                const customExercises = exercises.filter(e => e.custom);
-                if (customExercises.length > 0) {
-                    csvContent += "\nEjercicios Personalizados:\n";
-                    csvContent += "Ejercicio,Categoría,Progresiones\n";
-                    customExercises.forEach(exercise => {
-                        const progressionsStr = exercise.progressions ? exercise.progressions.join('; ') : '';
-                        csvContent += `"${exercise.name}","${exercise.category}","${progressionsStr}"\n`;
-                    });
-                }
-                
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.setAttribute('href', url);
-                link.setAttribute('download', `crossfit_semana_${weekKey}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-            
-            // Exportar como JSON
-            document.getElementById('export-json').addEventListener('click', function() {
-                const exportData = {
-                    workoutData: workoutData,
-                    usersData: usersData,
-                    customExercises: exercises.filter(e => e.custom),
-                    exportDate: new Date().toISOString(),
-                    version: "2.0"
-                };
-                
-                const dataStr = JSON.stringify(exportData, null, 2);
-                const blob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.setAttribute('href', url);
-                link.setAttribute('download', `crossfit_backup_${new Date().toISOString().split('T')[0]}.json`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-            
-            // Importar desde JSON
-            document.getElementById('import-json').addEventListener('click', function() {
-                document.getElementById('file-upload').click();
-            });
-            
-            document.getElementById('file-upload').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const importedData = JSON.parse(event.target.result);
+                        </div>
                         
-                        if (confirm('¿Restaurar todos los datos desde el archivo? Esto sobrescribirá los datos actuales.')) {
-                            if (importedData.workoutData) {
-                                workoutData = importedData.workoutData;
-                                saveWorkoutData();
-                            }
-                            
-                            if (importedData.usersData) {
-                                usersData = importedData.usersData;
-                                saveUsersData();
-                            }
-                            
-                            if (importedData.customExercises) {
-                                // Filtrar ejercicios predeterminados y agregar los personalizados
-                                exercises = exercises.filter(e => !e.custom);
-                                exercises = exercises.concat(importedData.customExercises);
-                                saveCustomExercises();
-                            }
-                            
-                            renderTable();
-                            updateStats();
-                            alert('Datos restaurados correctamente');
-                        }
-                    } catch (error) {
-                        alert('Error al importar el archivo: ' + error.message);
-                    }
-                    
-                    // Limpiar input
-                    e.target.value = '';
-                };
-                
-                reader.readAsText(file);
-            });
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-trophy"></i> Records Personales</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="personalRecords">
+                                    <!-- Records cargados dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            // Imprimir reporte
-            document.getElementById('export-print').addEventListener('click', function() {
-                window.print();
-            });
-        }
-    </script>
+            <!-- Pestaña Progresiones -->
+            <div class="tab-pane fade" id="progressions" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-line"></i> Registrar Progresión</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#progressionModal">
+                                    <i class="fas fa-plus-circle"></i> Nueva Progresión
+                                </button>
+                                <div class="summary-card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Progreso General</h6>
+                                        <div class="progress-container">
+                                            <div class="progress-fill" id="overallProgress" style="width: 0%"></div>
+                                        </div>
+                                        <div class="row text-center mt-3">
+                                            <div class="col-4">
+                                                <h5 id="totalProgressions">0</h5>
+                                                <small>Total</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <h5 id="masteryCount">0</h5>
+                                                <small>Maestrías</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <h5 id="regressionCount">0</h5>
+                                                <small>Regresiones</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-history"></i> Historial de Progresiones</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="filterProgressionUser">
+                                            <option value="">Todos los usuarios</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="filterProgressionExercise">
+                                            <option value="">Todos los ejercicios</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="progressionTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Usuario</th>
+                                                <th>Ejercicio</th>
+                                                <th>Nivel</th>
+                                                <th>Próxima Meta</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="progressionList">
+                                            <!-- Progresiones cargadas dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-star"></i> Máximos Logros por Ejercicio</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="achievementsList">
+                                    <!-- Logros cargados dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="tracking" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4 admin-only">
+                                <label class="form-label">Miembro</label>
+                                <select class="form-select" id="trackUser"></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Periodo</label>
+                                <select class="form-select" id="trackPeriod">
+                                    <option value="week">Semanal</option>
+                                    <option value="month">Mensual</option>
+                                    <option value="quarter">Trimestral</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5 d-flex gap-2 align-items-center">
+                                <button class="btn btn-outline-light" id="trackPrev"><i class="fas fa-chevron-left"></i></button>
+                                <strong class="flex-grow-1 text-center" id="trackLabel"></strong>
+                                <button class="btn btn-outline-light" id="trackNext"><i class="fas fa-chevron-right"></i></button>
+                                <button class="btn btn-primary" id="trackToday">Hoy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card mb-3">
+                            <div class="card-header">Registro</div>
+                            <div class="card-body" id="trackBody"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card mb-3">
+                            <div class="card-header">Resumen</div>
+                            <div class="card-body" id="trackStats"></div>
+                        </div>
+                    </div>
+                </div>
+                <h5 class="mb-3"><i class="fas fa-heart-pulse"></i> Recomendaciones según lo trabajado</h5>
+                <div class="row" id="trackRecs"></div>
+            </div>
+
+            <!-- Pestaña Datos -->
+            <div class="tab-pane fade" id="data" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-file-export"></i> Exportar Datos</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <p>Exporte todos los datos del sistema a un archivo Excel</p>
+                                <button class="btn btn-success mb-3 w-100" id="exportAllData">
+                                    <i class="fas fa-file-excel"></i> Exportar Todo a Excel
+                                </button>
+                                <button class="btn btn-warning w-100 mb-3" data-bs-toggle="modal" data-bs-target="#whatsappModal">
+                                    <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0"><i class="fas fa-database"></i> Estadísticas Rápidas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-4 mb-3">
+                                        <h4 id="infoTotalUsers">0</h4>
+                                        <small>Usuarios</small>
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <h4 id="infoTotalRM">0</h4>
+                                        <small>Registros RM</small>
+                                    </div>
+                                    <div class="col-4 mb-3">
+                                        <h4 id="infoTotalProgressions">0</h4>
+                                        <small>Progresiones</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-info-circle"></i> Información del Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card summary-card">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title" id="infoTotalUsers2">0</h5>
+                                        <p class="card-text">Usuarios</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card summary-card">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title" id="infoTotalRM2">0</h5>
+                                        <p class="card-text">Registros RM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card summary-card">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title" id="infoTotalProgressions2">0</h5>
+                                        <p class="card-text">Progresiones</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card summary-card">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title" id="infoLastBackup">Nunca</h5>
+                                        <p class="card-text">Último respaldo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle"></i>
+                            <small>Los datos se almacenan de forma centralizada en Google Sheets. Aun así, se recomienda exportar respaldos periódicamente.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn btn-success rounded-circle p-3 floating-btn" id="quickExportBtn" data-bs-toggle="tooltip" data-bs-placement="left" title="Exportar rápido">
+            <i class="fas fa-file-excel fa-2x"></i>
+        </button>
+    </div>
+    </div> <!-- fin #appContent -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/gifs.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/tracking.js"></script>
 </body>
 </html>
