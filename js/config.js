@@ -1,13 +1,14 @@
 // ==================== CONFIGURACIÓN DE LA API (Google Sheets) ====================
 // Pega aquí la URL de tu implementación de Google Apps Script (Code.gs)
 const CONFIG = {
-    API_URL: 'https://script.google.com/macros/s/AKfycbzvG-9QPQjWxrI3nWynSIng6AJqryDVKj2xffwibj1wXOLTucL8FKgVB3kcWmGf98J5xg/exec'
+    API_URL: 'https://script.google.com/macros/s/AKfycbweGqIJf2a04RSte0trf4wWtfolBBbBhkkPYKYCwTfaQnSzUGfWtAl_ofoLmbxS8V_lbw/exec'
 };
 
 // Datos en memoria (se llenan desde Google Sheets tras iniciar sesión)
 let users = [];
 let rmRecords = [];
 let progressions = [];
+let customExercises = [];
 
 // Sesión actual
 let currentSession = null; // { token, role, userId, username, name }
