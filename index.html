@@ -477,6 +477,37 @@
         </div>
     </div>
 
+    <!-- Modal Objetivo -->
+    <div class="modal fade" id="goalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bullseye"></i> Definir objetivo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="goalSlot">
+                    <div class="mb-3">
+                        <label class="form-label">Ejercicio</label>
+                        <select class="form-select" id="goalExercise"></select>
+                    </div>
+                    <div class="mb-3" id="goalRMBox" style="display:none;">
+                        <label class="form-label">Meta de 1RM (kg)</label>
+                        <input type="number" step="0.5" min="1" class="form-control" id="goalRMTarget">
+                    </div>
+                    <div class="mb-3" id="goalProgBox" style="display:none;">
+                        <label class="form-label">Progresión meta</label>
+                        <select class="form-select" id="goalProgTarget"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveGoalBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Progreso Usuario -->
     <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -555,6 +586,14 @@
             </h1>
         </div>
         <p class="text-center mb-4">PRIMERO NOS MOVEMOS BIEN DESPUES NOS MOVEMOS MÁS</p>
+
+        <div class="card mb-4" id="goalsCard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-bullseye"></i> Mis Objetivos</span>
+                <select class="form-select form-select-sm w-auto admin-only" id="goalUser"></select>
+            </div>
+            <div class="card-body"><div class="row" id="goalsBody"></div></div>
+        </div>
 
         <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -987,5 +1026,6 @@
     <script src="js/whatsapp.js?v=5"></script>
     <script src="js/app.js?v=5"></script>
     <script src="js/tracking.js?v=5"></script>
+    <script src="js/goals.js?v=1"></script>
 </body>
 </html>
