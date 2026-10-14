@@ -1,7 +1,7 @@
 // ==================== CONFIGURACIÓN DE LA API (Google Sheets) ====================
 // Pega aquí la URL de tu implementación de Google Apps Script (Code.gs)
 const CONFIG = {
-    API_URL: 'https://script.google.com/macros/s/AKfycbweGqIJf2a04RSte0trf4wWtfolBBbBhkkPYKYCwTfaQnSzUGfWtAl_ofoLmbxS8V_lbw/exec'
+    API_URL: 'https://script.google.com/macros/s/AKfycbzCunMpjwwRYwOEdk2oLzFKJDdyN3V9RGOxDT6d1foWjnThSdG7GJGhuvKT4aNwdmA4nA/exec'
 };
 
 // Datos en memoria (se llenan desde Google Sheets tras iniciar sesión)
