@@ -64,15 +64,20 @@
             h += `<div class="col-md-6 mb-3"><div class="exercise-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <strong>${p.done ? '🏆 ' : '🎯 '}${g.exercise}</strong>
-                    <div>
-                        <button class="btn btn-sm btn-outline-warning me-1" onclick="openGoalModal(${slot})"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteGoal('${g.id}')"><i class="fas fa-trash"></i></button>
-                    </div>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteGoal('${g.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="progress-container"><div class="progress-fill" style="width:${p.pct}%"></div></div>
                 <div class="d-flex justify-content-between">
                     <small>${p.text}</small>
                     <small><strong>${Math.round(p.pct)}%</strong> · ${p.left}</small>
+                </div>
+                <div class="d-flex gap-2 mt-2 flex-wrap">
+                    <button class="btn btn-sm ${p.done ? 'btn-outline-info' : 'btn-primary'}" onclick="goalRegister(${slot})">
+                        <i class="fas ${g.type === 'rm' ? 'fa-dumbbell' : 'fa-chart-line'}"></i> ${g.type === 'rm' ? 'Registrar RM' : 'Registrar progresión'}
+                    </button>
+                    <button class="btn btn-sm ${p.done ? 'btn-success' : 'btn-outline-warning'}" onclick="openGoalModal(${slot}, true)">
+                        <i class="fas fa-bullseye"></i> Nueva meta
+                    </button>
                 </div>
             </div></div>`;
         });
@@ -89,13 +94,13 @@
         }
     }
 
-    window.openGoalModal = function (slot) {
+    window.openGoalModal = function (slot, fresh) {
         if (!goalUserId()) { alert('Seleccione un miembro.'); return; }
         $('#goalSlot').val(slot);
         $('#goalExercise').empty().append('<option value="">Seleccionar ejercicio</option>')
             .append(exercises.map(e => `<option value="${e.name}">${e.name}</option>`));
         $('#goalRMTarget').val('');
-        const g = goalsData.find(x => x.userId === goalUserId() && Number(x.slot) === slot);
+        const g = fresh ? null : goalsData.find(x => x.userId === goalUserId() && Number(x.slot) === slot);
         if (g) {
             $('#goalExercise').val(g.exercise);
             buildGoalTarget();
@@ -122,6 +127,21 @@
         $('#goalModal').modal('hide');
         renderGoals();
     }
+
+    window.goalRegister = function (slot) {
+        const uid = goalUserId();
+        const g = goalsData.find(x => x.userId === uid && Number(x.slot) === slot);
+        if (!g) return;
+        if (g.type === 'rm') {
+            $('#rmUser').val(uid);
+            $('#rmExercise').val(g.exercise).trigger('change');
+            $('#rmModal').modal('show');
+        } else {
+            $('#progressionUser').val(uid);
+            $('#progressionExercise').val(g.exercise).trigger('change');
+            $('#progressionModal').modal('show');
+        }
+    };
 
     window.deleteGoal = async function (id) {
         if (!confirm('¿Eliminar objetivo?')) return;
