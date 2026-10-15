@@ -35,7 +35,9 @@ function applyRoleRestrictions() {
         if (isAdmin) $(this).removeAttr('disabled'); 
     });
     $('.member-only').toggleClass('d-none', isAdmin);
-
+    if (!isAdmin) {
+        bootstrap.Tab.getOrCreateInstance(document.getElementById('rm-tab')).show();
+    }
 }
 
 async function loadAllData() {
