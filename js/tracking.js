@@ -193,11 +193,12 @@ function renderTrackStats(recs) {
 
 function renderTrackRecs(recs) {
     if (currentSession.role !== 'admin') { $('#trackRecs').empty(); return; }
+    const hoy = ymd(new Date());
+    const recsHoy = weeklyRecords.filter(r => r.userId === trackUserId() && r.date === hoy);
     const g = {};
-    recs.forEach(r => (EX_GROUPS[r.exercise] || []).forEach(k => g[k] = (g[k] || 0) + 1));
+    recsHoy.forEach(r => (EX_GROUPS[r.exercise] || []).forEach(k => g[k] = (g[k] || 0) + 1));
     const keys = Object.keys(g).sort((a, b) => g[b] - g[a]);
-    if (!keys.length) { $('#trackRecs').html('<p class="text-muted">Registre ejercicios para ver recomendaciones.</p>'); return; }
-    const esc = s => $('<div>').text(s).html();
+    if (!keys.length) { $('#trackRecs').html('<p class="text-muted">Registre ejercicios de hoy para ver recomendaciones.</p>'); return; }    const esc = s => $('<div>').text(s).html();
     const items = (k, t) => REC[k][t].map(x => `<li>${x}</li>`).concat(
         customExercises.filter(c => c.group === k && c.type === t).map(c =>
             `<li>${esc(c.name)} <a href="#" class="text-danger ms-1" onclick="deleteCustomEx('${c.id}');return false;"><i class="fas fa-times"></i></a></li>`)
