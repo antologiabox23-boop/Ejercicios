@@ -3,8 +3,12 @@
 // Usa los globals existentes: apiCall, currentSession, users, rmRecords, progressions, exercises.
 (function () {
     let goalsData = [];
+    const SLOT_CAT = { 1: 'gimnastic', 2: 'weightlifting' };
+    const SLOT_LABEL = { 1: 'Gimnástico', 2: 'Levantamiento' };
+    const sameId = (a, b) => String(a).trim() === String(b).trim();
     let loaded = false;
     let bound = false;
+    let busy = false;
 
     function goalUserId() {
         return currentSession.role === 'member' ? currentSession.userId : $('#goalUser').val();
@@ -20,7 +24,7 @@
     function goalProgress(g, uid) {
         if (g.type === 'rm') {
             const t = parseFloat(g.target) || 0;
-            const cur = Math.max(0, ...rmRecords.filter(r => r.userId === uid && r.exercise === g.exercise).map(r => r.rm));
+            const cur = Math.max(0, ...rmRecords.filter(r => sameId(r.userId, uid) && r.exercise === g.exercise).map(r => r.rm));
             const done = t > 0 && cur >= t;
             return {
                 pct: t ? Math.min(100, cur / t * 100) : 0,
@@ -33,7 +37,7 @@
         const list = ex && ex.progressions ? ex.progressions : [];
         const ti = list.indexOf(g.target);
         const last = progressions
-            .filter(p => p.userId === uid && p.exercise === g.exercise)
+            .filter(p => sameId(p.userId, uid) && p.exercise === g.exercise)
             .map(p => list.indexOf(p.level))
             .reduce((a, b) => Math.max(a, b), -1);
         const done = ti >= 0 && last >= ti;
@@ -49,13 +53,13 @@
         if (!currentSession) return;
         const uid = goalUserId();
         if (!uid) { $('#goalsBody').html('<p class="text-muted">Seleccione un miembro.</p>'); return; }
-        const mine = goalsData.filter(g => g.userId === uid);
+        const mine = goalsData.filter(g => sameId(g.userId, uid));
         let h = '';
         [1, 2].forEach(slot => {
             const g = mine.find(x => Number(x.slot) === slot);
             if (!g) {
                 h += `<div class="col-md-6 mb-3"><div class="exercise-card text-center">
-                    <p class="text-muted mb-2">Objetivo ${slot} sin definir</p>
+                    <p class="text-muted mb-2">Objetivo ${SLOT_LABEL[slot].toLowerCase()} sin definir</p>
                     <button class="btn btn-primary btn-sm" onclick="openGoalModal(${slot})"><i class="fas fa-plus"></i> Definir objetivo</button>
                 </div></div>`;
                 return;
@@ -63,7 +67,7 @@
             const p = goalProgress(g, uid);
             h += `<div class="col-md-6 mb-3"><div class="exercise-card">
                 <div class="d-flex justify-content-between align-items-center">
-                    <strong>${p.done ? '🏆 ' : '🎯 '}${g.exercise}</strong>
+                    <div><small class="text-muted d-block">${SLOT_LABEL[slot]}</small><strong>${p.done ? '🏆 ' : '🎯 '}${g.exercise}</strong></div>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteGoal('${g.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="progress-container"><div class="progress-fill" style="width:${p.pct}%"></div></div>
@@ -98,9 +102,10 @@
         if (!goalUserId()) { alert('Seleccione un miembro.'); return; }
         $('#goalSlot').val(slot);
         $('#goalExercise').empty().append('<option value="">Seleccionar ejercicio</option>')
-            .append(exercises.map(e => `<option value="${e.name}">${e.name}</option>`));
+            .append(exercises.filter(e => e.category === SLOT_CAT[slot]).map(e => `<option value="${e.name}">${e.name}</option>`));
+        $('.modal-title', '#goalModal').html(`<i class="fas fa-bullseye"></i> Objetivo ${slot}: ${SLOT_LABEL[slot]}`);
         $('#goalRMTarget').val('');
-        const g = fresh ? null : goalsData.find(x => x.userId === goalUserId() && Number(x.slot) === slot);
+        const g = fresh ? null : goalsData.find(x => sameId(x.userId, goalUserId()) && Number(x.slot) === slot);
         if (g) {
             $('#goalExercise').val(g.exercise);
             buildGoalTarget();
@@ -114,6 +119,7 @@
     async function saveGoal() {
         const ex = exercises.find(e => e.name === $('#goalExercise').val());
         if (!ex) { alert('Seleccione un ejercicio.'); return; }
+        if (ex.category !== SLOT_CAT[Number($('#goalSlot').val())]) { alert('Este objetivo debe ser de tipo ' + SLOT_LABEL[Number($('#goalSlot').val())].toLowerCase() + '.'); return; }
         const isRM = ex.category === 'weightlifting';
         const target = isRM ? $('#goalRMTarget').val() : $('#goalProgTarget').val();
         if (!target || (isRM && parseFloat(target) <= 0)) { alert('Defina la meta.'); return; }
@@ -130,7 +136,7 @@
 
     window.goalRegister = function (slot) {
         const uid = goalUserId();
-        const g = goalsData.find(x => x.userId === uid && Number(x.slot) === slot);
+        const g = goalsData.find(x => sameId(x.userId, uid) && Number(x.slot) === slot);
         if (!g) return;
         if (g.type === 'rm') {
             $('#rmUser').val(uid);
@@ -153,7 +159,10 @@
 
     async function refreshGoals() {
         const res = await apiCall('getGoals');
-        if (res && res.success) goalsData = res.goals;
+        if (res && res.success) { goalsData = res.goals || []; return true; }
+        console.warn('getGoals falló:', res);
+        $('#goalsBody').html('<p class="text-muted">No se pudieron cargar los objetivos: ' + ((res && res.message) || 'sin respuesta') + '</p>');
+        return false;
     }
 
     function bindOnce() {
@@ -165,10 +174,13 @@
     }
 
     async function ensureLoaded() {
-        if (loaded || !currentSession || !currentSession.token) return;
-        loaded = true;
+        if (loaded || busy || !currentSession || !currentSession.token) return;
+        busy = true;
         bindOnce();
-        await refreshGoals();
+        const ok = await refreshGoals();
+        busy = false;
+        if (!ok) return;
+        loaded = true;
         updateGoalUsers();
         renderGoals();
     }
