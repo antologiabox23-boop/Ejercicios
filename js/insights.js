@@ -75,7 +75,10 @@
 
         const counts = {};
         trackExercises().forEach(x => counts[x.name] = 0);
-        recs.forEach(r => counts[r.exercise] = (counts[r.exercise] || 0) + 1);
+        // Cuenta 1 por día por ejercicio, sin importar cuántos usuarios lo registraron
+        const days = {};
+        recs.forEach(r => { (days[r.exercise] = days[r.exercise] || new Set()).add(String(r.date).substring(0, 10)); });
+        Object.keys(days).forEach(k => counts[k] = days[k].size);
 
         const all = Object.entries(counts);
         const top = all.filter(a => a[1] > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 3);
